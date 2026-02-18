@@ -1,8 +1,151 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+type AccountType = "buyer" | "artisan";
+
+type RegisterFormData = {
+  accountType: AccountType;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  businessName: string;
+  bio: string;
+  agreeToTerms: boolean;
+};
+
+const initialFormData: RegisterFormData = {
+  accountType: "buyer",
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  businessName: "",
+  bio: "",
+  agreeToTerms: false,
+};
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState<RegisterFormData>(initialFormData);
+  const [formError, setFormError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, type, value } = event.target;
+    const nextValue =
+      type === "checkbox" ? (event.target as HTMLInputElement).checked : value;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: nextValue,
+    }));
+
+    if (formError) {
+      setFormError("");
+    }
+  };
+
+  const validateForm = () => {
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      return "First and last name are required.";
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      return "Enter a valid email address.";
+    }
+
+    if (formData.password.length < 8) {
+      return "Password must be at least 8 characters long.";
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      return "Passwords do not match.";
+    }
+
+    if (!formData.agreeToTerms) {
+      return "You must agree to the Terms of Service and Privacy Policy.";
+    }
+
+    if (formData.accountType === "artisan" && !formData.businessName.trim()) {
+      return "Business name is required for artisan accounts.";
+    }
+
+    return "";
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const validationError = validateForm();
+    if (validationError) {
+      setFormError(validationError);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormError("");
+    setSuccessMessage("");
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          email: formData.email.trim().toLowerCase(),
+          password: formData.password,
+          accountType: formData.accountType,
+          businessName:
+            formData.accountType === "artisan"
+              ? formData.businessName.trim()
+              : undefined,
+          bio:
+            formData.accountType === "artisan"
+              ? formData.bio.trim() || undefined
+              : undefined,
+        }),
+      });
+
+      const payload = (await response.json()) as { message?: string };
+
+      if (!response.ok) {
+        throw new Error(
+          payload.message || "Unable to create account right now.",
+        );
+      }
+
+      setSuccessMessage(
+        payload.message || "Account created! Redirecting to sign in...",
+      );
+      setFormData(initialFormData);
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 1200);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.";
+      setFormError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       {/* Header */}
@@ -34,7 +177,7 @@ export default function RegisterPage() {
           </Link>
           <div style={{ display: "flex", gap: "1.5rem" }}>
             <Link href="/">Home</Link>
-            <a href="/login">Sign In</a>
+            <Link href="/login">Sign In</Link>
           </div>
         </nav>
       </header>
@@ -82,7 +225,7 @@ export default function RegisterPage() {
           </p>
 
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -118,7 +261,8 @@ export default function RegisterPage() {
                     type="radio"
                     name="accountType"
                     value="buyer"
-                    defaultChecked
+                    checked={formData.accountType === "buyer"}
+                    onChange={handleInputChange}
                   />
                   <span>Buyer</span>
                 </label>
@@ -134,7 +278,13 @@ export default function RegisterPage() {
                     gap: "0.5rem",
                   }}
                 >
-                  <input type="radio" name="accountType" value="artisan" />
+                  <input
+                    type="radio"
+                    name="accountType"
+                    value="artisan"
+                    checked={formData.accountType === "artisan"}
+                    onChange={handleInputChange}
+                  />
                   <span>Artisan</span>
                 </label>
               </div>
@@ -159,8 +309,11 @@ export default function RegisterPage() {
                   First Name
                 </label>
                 <input
+                  name="firstName"
                   type="text"
                   placeholder="John"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
                   style={{
                     width: "100%",
                     padding: "0.75rem 1rem",
@@ -183,8 +336,11 @@ export default function RegisterPage() {
                   Last Name
                 </label>
                 <input
+                  name="lastName"
                   type="text"
                   placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
                   style={{
                     width: "100%",
                     padding: "0.75rem 1rem",
@@ -209,8 +365,11 @@ export default function RegisterPage() {
                 Email Address
               </label>
               <input
+                name="email"
                 type="email"
                 placeholder="your@email.com"
+                value={formData.email}
+                onChange={handleInputChange}
                 style={{
                   width: "100%",
                   padding: "0.75rem 1rem",
@@ -234,8 +393,11 @@ export default function RegisterPage() {
                 Password
               </label>
               <input
+                name="password"
                 type="password"
                 placeholder="••••••••"
+                value={formData.password}
+                onChange={handleInputChange}
                 style={{
                   width: "100%",
                   padding: "0.75rem 1rem",
@@ -259,8 +421,11 @@ export default function RegisterPage() {
                 Confirm Password
               </label>
               <input
+                name="confirmPassword"
                 type="password"
                 placeholder="••••••••"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
                 style={{
                   width: "100%",
                   padding: "0.75rem 1rem",
@@ -272,6 +437,67 @@ export default function RegisterPage() {
               />
             </div>
 
+            {formData.accountType === "artisan" && (
+              <>
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: "var(--primary-dark)",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Business Name
+                  </label>
+                  <input
+                    name="businessName"
+                    type="text"
+                    placeholder="Your Craft Studio"
+                    value={formData.businessName}
+                    onChange={handleInputChange}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem 1rem",
+                      borderRadius: "4px",
+                      border: "1px solid var(--primary)",
+                      fontSize: "1rem",
+                      fontFamily: "inherit",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "0.5rem",
+                      color: "var(--primary-dark)",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Short Bio (Optional)
+                  </label>
+                  <textarea
+                    name="bio"
+                    placeholder="Tell customers about your craft..."
+                    value={formData.bio}
+                    onChange={handleInputChange}
+                    rows={3}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem 1rem",
+                      borderRadius: "4px",
+                      border: "1px solid var(--primary)",
+                      fontSize: "1rem",
+                      fontFamily: "inherit",
+                      resize: "vertical",
+                    }}
+                  />
+                </div>
+              </>
+            )}
+
             <label
               style={{
                 display: "flex",
@@ -281,7 +507,10 @@ export default function RegisterPage() {
               }}
             >
               <input
+                name="agreeToTerms"
                 type="checkbox"
+                checked={formData.agreeToTerms}
+                onChange={handleInputChange}
                 style={{
                   cursor: "pointer",
                   marginTop: "0.3rem",
@@ -292,7 +521,34 @@ export default function RegisterPage() {
               </span>
             </label>
 
+            {formError && (
+              <p
+                role="alert"
+                style={{
+                  color: "var(--primary-dark)",
+                  fontSize: "0.95rem",
+                  fontWeight: "600",
+                }}
+              >
+                {formError}
+              </p>
+            )}
+
+            {successMessage && (
+              <p
+                style={{
+                  color: "var(--primary)",
+                  fontSize: "0.95rem",
+                  fontWeight: "600",
+                }}
+              >
+                {successMessage}
+              </p>
+            )}
+
             <button
+              type="submit"
+              disabled={isSubmitting}
               style={{
                 backgroundColor: "var(--primary)",
                 color: "white",
@@ -301,17 +557,20 @@ export default function RegisterPage() {
                 border: "none",
                 fontSize: "1rem",
                 fontWeight: "700",
-                cursor: "pointer",
+                cursor: isSubmitting ? "not-allowed" : "pointer",
+                opacity: isSubmitting ? 0.7 : 1,
                 transition: "all 0.3s ease",
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--primary-dark)";
+                if (!isSubmitting) {
+                  e.currentTarget.style.backgroundColor = "var(--primary-dark)";
+                }
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.backgroundColor = "var(--primary)";
               }}
             >
-              Create Account
+              {isSubmitting ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
@@ -325,7 +584,7 @@ export default function RegisterPage() {
 
           <p style={{ textAlign: "center", color: "var(--text-light)" }}>
             Already have an account?{" "}
-            <a
+            <Link
               href="/login"
               style={{
                 color: "var(--primary)",
@@ -334,7 +593,7 @@ export default function RegisterPage() {
               }}
             >
               Sign in here
-            </a>
+            </Link>
           </p>
         </div>
       </section>
