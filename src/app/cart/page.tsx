@@ -244,9 +244,11 @@ export default function CartPage() {
                 >
                   ${subtotal.toFixed(2)}
                 </p>
-                <button
-                  type="button"
+                <Link
+                  href="/checkout"
                   style={{
+                    display: "block",
+                    textAlign: "center",
                     width: "100%",
                     backgroundColor: "var(--primary)",
                     color: "white",
@@ -259,7 +261,7 @@ export default function CartPage() {
                   }}
                 >
                   Proceed to Checkout
-                </button>
+                </Link>
                 <button
                   type="button"
                   onClick={clearCart}

@@ -53,11 +53,31 @@ export default function Home() {
           >
             🎨 Handcrafted Haven
           </div>
-          <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "1rem",
+              alignItems: "center",
+              flexWrap: "wrap",
+              justifyContent: "flex-end",
+            }}
+          >
             <a href="#featured">Featured</a>
             <a href="#about">About</a>
             <a href="/browse">Browse</a>
-            <a href="/cart">Cart ({totalCartItems})</a>
+            <Link
+              href="/cart"
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "white",
+                padding: "0.45rem 0.9rem",
+                borderRadius: "999px",
+                fontWeight: "700",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Cart • {totalCartItems}
+            </Link>
             {currentUser ? (
               <a href="/welcome" style={{ color: "var(--text-light)" }}>
                 Welcome, {currentUser.firstName}
