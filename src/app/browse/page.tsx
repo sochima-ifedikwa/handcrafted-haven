@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+import { addToCart, useCartItems } from "@/lib/use-cart";
 
 type ProductItem = {
   id: number;
@@ -19,6 +20,7 @@ type ProductItem = {
 
 export default function BrowsePage() {
   const currentUser = useCurrentUser();
+  const cartItems = useCartItems();
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -78,6 +80,11 @@ export default function BrowsePage() {
     [],
   );
 
+  const totalCartItems = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    [cartItems],
+  );
+
   return (
     <>
       {/* Header */}
@@ -112,6 +119,7 @@ export default function BrowsePage() {
           </Link>
           <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
             <Link href="/">Home</Link>
+            <Link href="/cart">Cart ({totalCartItems})</Link>
             {currentUser ? (
               <Link href="/welcome">Welcome, {currentUser.firstName}</Link>
             ) : (
@@ -260,8 +268,7 @@ export default function BrowsePage() {
             }}
           >
             {products.map((product) => (
-              <Link
-                href={`/product/${product.id}`}
+              <div
                 key={product.id}
                 style={{
                   backgroundColor: "white",
@@ -271,60 +278,57 @@ export default function BrowsePage() {
                   transition: "all 0.3s ease",
                   cursor: "pointer",
                 }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = "translateY(-8px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 12px 30px rgba(166, 124, 82, 0.15)";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
               >
-                <div
-                  style={{
-                    backgroundColor: "var(--accent)",
-                    padding: "3rem 1rem",
-                    textAlign: "center",
-                    fontSize: "3rem",
+                <Link
+                  href={`/product/${product.id}`}
+                  style={{ display: "block" }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = "translateY(-8px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 12px 30px rgba(166, 124, 82, 0.15)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
                   }}
                 >
-                  {product.imageUrl || "🧵"}
-                </div>
-                <div style={{ padding: "1.5rem" }}>
-                  <h3
-                    style={{
-                      marginBottom: "0.5rem",
-                      color: "var(--primary-dark)",
-                    }}
-                  >
-                    {product.name}
-                  </h3>
-                  <p
-                    style={{
-                      color: "var(--text-light)",
-                      fontSize: "0.9rem",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    by {product.sellerBusinessName || product.sellerName}
-                  </p>
-                  <p
-                    style={{
-                      color: "var(--text-light)",
-                      fontSize: "0.9rem",
-                      marginBottom: "0.75rem",
-                    }}
-                  >
-                    {product.description}
-                  </p>
                   <div
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      backgroundColor: "var(--accent)",
+                      padding: "3rem 1rem",
+                      textAlign: "center",
+                      fontSize: "3rem",
                     }}
                   >
+                    {product.imageUrl || "🧵"}
+                  </div>
+                  <div style={{ padding: "1.5rem" }}>
+                    <h3
+                      style={{
+                        marginBottom: "0.5rem",
+                        color: "var(--primary-dark)",
+                      }}
+                    >
+                      {product.name}
+                    </h3>
+                    <p
+                      style={{
+                        color: "var(--text-light)",
+                        fontSize: "0.9rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      by {product.sellerBusinessName || product.sellerName}
+                    </p>
+                    <p
+                      style={{
+                        color: "var(--text-light)",
+                        fontSize: "0.9rem",
+                        marginBottom: "0.75rem",
+                      }}
+                    >
+                      {product.description}
+                    </p>
                     <span
                       style={{
                         fontSize: "1.3rem",
@@ -334,22 +338,53 @@ export default function BrowsePage() {
                     >
                       ${product.price.toFixed(2)}
                     </span>
-                    <span
-                      style={{
-                        backgroundColor: "var(--primary)",
-                        color: "white",
-                        padding: "0.5rem 1rem",
-                        borderRadius: "4px",
-                        border: "none",
-                        fontWeight: "600",
-                        fontSize: "0.9rem",
-                      }}
-                    >
-                      View
-                    </span>
                   </div>
+                </Link>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "0 1.5rem 1.5rem",
+                  }}
+                >
+                  <Link
+                    href={`/product/${product.id}`}
+                    style={{
+                      color: "var(--primary)",
+                      fontWeight: "600",
+                    }}
+                  >
+                    View
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      addToCart(
+                        {
+                          productId: product.id,
+                          name: product.name,
+                          price: product.price,
+                          imageUrl: product.imageUrl,
+                        },
+                        1,
+                      )
+                    }
+                    style={{
+                      backgroundColor: "var(--primary)",
+                      color: "white",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "4px",
+                      border: "none",
+                      fontWeight: "600",
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Add to Cart
+                  </button>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
 

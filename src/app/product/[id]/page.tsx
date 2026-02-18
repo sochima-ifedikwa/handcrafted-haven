@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+import { addToCart, useCartItems } from "@/lib/use-cart";
 
 type ProductReview = {
   id: number;
@@ -29,6 +30,7 @@ type ProductItem = {
 
 export default function ProductPage() {
   const currentUser = useCurrentUser();
+  const cartItems = useCartItems();
   const params = useParams<{ id: string }>();
   const productId = Number(params.id);
   const [product, setProduct] = useState<ProductItem | null>(null);
@@ -38,6 +40,8 @@ export default function ProductPage() {
   const [reviewText, setReviewText] = useState("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewMessage, setReviewMessage] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [cartMessage, setCartMessage] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -135,6 +139,29 @@ export default function ProductPage() {
     }
   };
 
+  const totalCartItems = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    [cartItems],
+  );
+
+  const handleAddToCart = () => {
+    if (!product) {
+      return;
+    }
+
+    addToCart(
+      {
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      },
+      quantity,
+    );
+
+    setCartMessage(`Added ${quantity} item(s) to cart.`);
+  };
+
   return (
     <>
       {/* Header */}
@@ -169,6 +196,7 @@ export default function ProductPage() {
           </Link>
           <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
             <Link href="/browse">Browse</Link>
+            <Link href="/cart">Cart ({totalCartItems})</Link>
             {currentUser ? (
               <Link href="/welcome">Welcome, {currentUser.firstName}</Link>
             ) : (
@@ -446,7 +474,10 @@ export default function ProductPage() {
                   >
                     <input
                       type="number"
-                      defaultValue="1"
+                      value={quantity}
+                      onChange={(event) =>
+                        setQuantity(Math.max(1, Number(event.target.value) || 1))
+                      }
                       min="1"
                       style={{
                         padding: "0.75rem",
@@ -456,6 +487,8 @@ export default function ProductPage() {
                       }}
                     />
                     <button
+                      type="button"
+                      onClick={handleAddToCart}
                       style={{
                         backgroundColor: "var(--primary)",
                         color: "white",
@@ -470,6 +503,17 @@ export default function ProductPage() {
                       Add to Cart
                     </button>
                   </div>
+                  {cartMessage && (
+                    <p
+                      style={{
+                        marginTop: "0.6rem",
+                        color: "var(--primary-dark)",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {cartMessage} <Link href="/cart">View cart</Link>
+                    </p>
+                  )}
                 </div>
               </div>
 
