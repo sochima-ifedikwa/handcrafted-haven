@@ -11,13 +11,19 @@ export async function GET(
   const productId = Number(id);
 
   if (Number.isNaN(productId)) {
-    return NextResponse.json({ message: "Invalid product id." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid product id." },
+      { status: 400 },
+    );
   }
 
   const product = await getProductById(productId);
 
   if (!product) {
-    return NextResponse.json({ message: "Product not found." }, { status: 404 });
+    return NextResponse.json(
+      { message: "Product not found." },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json({ product }, { status: 200 });

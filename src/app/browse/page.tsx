@@ -51,7 +51,10 @@ export default function BrowsePage() {
         }
 
         const response = await fetch(`/api/products?${query.toString()}`);
-        const payload = (await response.json()) as { products?: ProductItem[]; message?: string };
+        const payload = (await response.json()) as {
+          products?: ProductItem[];
+          message?: string;
+        };
 
         if (!response.ok) {
           throw new Error(payload.message || "Could not load products.");
@@ -70,7 +73,10 @@ export default function BrowsePage() {
     void fetchProducts();
   }, [category, minPrice, maxPrice]);
 
-  const categories = useMemo(() => ["all", "jewelry", "pottery", "textiles", "home", "accessories"], []);
+  const categories = useMemo(
+    () => ["all", "jewelry", "pottery", "textiles", "home", "accessories"],
+    [],
+  );
 
   return (
     <>
@@ -228,7 +234,13 @@ export default function BrowsePage() {
           </div>
 
           {errorMessage && (
-            <p style={{ marginBottom: "1rem", color: "var(--primary-dark)", fontWeight: "600" }}>
+            <p
+              style={{
+                marginBottom: "1rem",
+                color: "var(--primary-dark)",
+                fontWeight: "600",
+              }}
+            >
               {errorMessage}
             </p>
           )}
@@ -297,7 +309,13 @@ export default function BrowsePage() {
                   >
                     by {product.sellerBusinessName || product.sellerName}
                   </p>
-                  <p style={{ color: "var(--text-light)", fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+                  <p
+                    style={{
+                      color: "var(--text-light)",
+                      fontSize: "0.9rem",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
                     {product.description}
                   </p>
                   <div

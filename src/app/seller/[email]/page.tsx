@@ -34,7 +34,9 @@ export default function SellerProfilePage() {
       setErrorMessage("");
 
       try {
-        const response = await fetch(`/api/sellers/${encodeURIComponent(sellerEmail)}`);
+        const response = await fetch(
+          `/api/sellers/${encodeURIComponent(sellerEmail)}`,
+        );
         const payload = (await response.json()) as {
           profile?: SellerProfile;
           message?: string;
@@ -47,7 +49,9 @@ export default function SellerProfilePage() {
         setProfile(payload.profile);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : "Unable to load seller profile.",
+          error instanceof Error
+            ? error.message
+            : "Unable to load seller profile.",
         );
       } finally {
         setIsLoading(false);
@@ -68,15 +72,24 @@ export default function SellerProfilePage() {
       <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
         <Link
           href="/browse"
-          style={{ color: "var(--primary)", fontWeight: "600", display: "inline-block", marginBottom: "1rem" }}
+          style={{
+            color: "var(--primary)",
+            fontWeight: "600",
+            display: "inline-block",
+            marginBottom: "1rem",
+          }}
         >
           ← Back to Browse
         </Link>
 
         {isLoading ? (
-          <p style={{ color: "var(--text-light)" }}>Loading seller profile...</p>
+          <p style={{ color: "var(--text-light)" }}>
+            Loading seller profile...
+          </p>
         ) : errorMessage ? (
-          <p style={{ color: "var(--primary-dark)", fontWeight: "600" }}>{errorMessage}</p>
+          <p style={{ color: "var(--primary-dark)", fontWeight: "600" }}>
+            {errorMessage}
+          </p>
         ) : profile ? (
           <>
             <div
@@ -88,15 +101,20 @@ export default function SellerProfilePage() {
                 marginBottom: "1.5rem",
               }}
             >
-              <h1 style={{ color: "var(--primary-dark)", marginBottom: "0.5rem" }}>
+              <h1
+                style={{ color: "var(--primary-dark)", marginBottom: "0.5rem" }}
+              >
                 {profile.sellerBusinessName || profile.sellerName}
               </h1>
               <p style={{ color: "var(--text-light)" }}>
-                {profile.sellerStory || "This artisan has not added a story yet."}
+                {profile.sellerStory ||
+                  "This artisan has not added a story yet."}
               </p>
             </div>
 
-            <h2 style={{ color: "var(--primary-dark)", marginBottom: "0.8rem" }}>
+            <h2
+              style={{ color: "var(--primary-dark)", marginBottom: "0.8rem" }}
+            >
               Curated Collection
             </h2>
             <div
@@ -117,10 +135,24 @@ export default function SellerProfilePage() {
                     padding: "1rem",
                   }}
                 >
-                  <p style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>{item.imageUrl || "🧵"}</p>
-                  <p style={{ fontWeight: "700", color: "var(--primary-dark)" }}>{item.name}</p>
-                  <p style={{ color: "var(--text-light)", fontSize: "0.9rem" }}>{item.description}</p>
-                  <p style={{ marginTop: "0.5rem", color: "var(--primary)", fontWeight: "700" }}>
+                  <p style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>
+                    {item.imageUrl || "🧵"}
+                  </p>
+                  <p
+                    style={{ fontWeight: "700", color: "var(--primary-dark)" }}
+                  >
+                    {item.name}
+                  </p>
+                  <p style={{ color: "var(--text-light)", fontSize: "0.9rem" }}>
+                    {item.description}
+                  </p>
+                  <p
+                    style={{
+                      marginTop: "0.5rem",
+                      color: "var(--primary)",
+                      fontWeight: "700",
+                    }}
+                  >
                     ${item.price.toFixed(2)}
                   </p>
                 </Link>

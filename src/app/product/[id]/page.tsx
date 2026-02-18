@@ -212,364 +212,403 @@ export default function ProductPage() {
             </p>
           ) : product ? (
             <>
-          <Link
-            href="/browse"
-            style={{
-              color: "var(--primary)",
-              fontWeight: "600",
-              marginBottom: "2rem",
-              display: "inline-block",
-            }}
-          >
-            ← Back to Browse
-          </Link>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "3rem",
-              marginTop: "2rem",
-            }}
-          >
-            {/* Product Image */}
-            <div
-              style={{
-                backgroundColor: "var(--accent)",
-                borderRadius: "8px",
-                border: "2px solid var(--primary)",
-                padding: "3rem",
-                textAlign: "center",
-                fontSize: "8rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {product.imageUrl || "🧵"}
-            </div>
-
-            {/* Product Details */}
-            <div>
-              <div
+              <Link
+                href="/browse"
                 style={{
-                  backgroundColor: "var(--primary)",
-                  color: "white",
-                  padding: "0.5rem 1rem",
-                  borderRadius: "4px",
-                  display: "inline-block",
-                  marginBottom: "1rem",
-                  fontSize: "0.9rem",
-                  fontWeight: "600",
-                }}
-              >
-                {product.category[0]?.toUpperCase() + product.category.slice(1)}
-              </div>
-
-              <h1
-                style={{
-                  fontSize: "2.5rem",
-                  color: "var(--primary-dark)",
-                  marginBottom: "1rem",
-                }}
-              >
-                {product.name}
-              </h1>
-
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "1rem",
-                  marginBottom: "2rem",
-                }}
-              >
-                <span style={{ fontSize: "1.3rem" }}>⭐⭐⭐⭐⭐</span>
-                <span style={{ color: "var(--text-light)" }}>
-                  {product.reviews.length} reviews
-                  {product.reviews.length > 0
-                    ? ` • Avg ${averageRating.toFixed(1)}/5`
-                    : ""}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  fontSize: "2rem",
-                  fontWeight: "bold",
                   color: "var(--primary)",
+                  fontWeight: "600",
                   marginBottom: "2rem",
+                  display: "inline-block",
                 }}
               >
-                ${product.price.toFixed(2)}
-              </div>
+                ← Back to Browse
+              </Link>
 
-              <div
-                style={{
-                  backgroundColor: "var(--accent)",
-                  padding: "1.5rem",
-                  borderRadius: "8px",
-                  marginBottom: "2rem",
-                }}
-              >
-                <h3
-                  style={{
-                    marginBottom: "1rem",
-                    color: "var(--primary-dark)",
-                  }}
-                >
-                  About This Item
-                </h3>
-                <p
-                  style={{
-                    lineHeight: "1.7",
-                    color: "var(--text-light)",
-                  }}
-                >
-                  {product.description}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  backgroundColor: "var(--accent)",
-                  padding: "1.5rem",
-                  borderRadius: "8px",
-                  marginBottom: "2rem",
-                }}
-              >
-                <h3
-                  style={{
-                    marginBottom: "1rem",
-                    color: "var(--primary-dark)",
-                  }}
-                >
-                  Details
-                </h3>
-                <ul style={{ lineHeight: "2", color: "var(--text-light)" }}>
-                  <li>
-                    <strong>Material:</strong> Genuine leather
-                  </li>
-                  <li>
-                    <strong>Dimensions:</strong> 12&quot; W &times; 10&quot; H
-                    &times; 5&quot; D
-                  </li>
-                  <li>
-                    <strong>Closure:</strong> Magnetic snap
-                  </li>
-                  <li>
-                    <strong>Interior:</strong> Lined with cotton
-                  </li>
-                </ul>
-              </div>
-
-              <div
-                style={{
-                  backgroundColor: "var(--accent)",
-                  padding: "1.5rem",
-                  borderRadius: "8px",
-                  marginBottom: "2rem",
-                }}
-              >
-                <h3
-                  style={{
-                    marginBottom: "1rem",
-                    color: "var(--primary-dark)",
-                  }}
-                >
-                  About the Artisan
-                </h3>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "1rem",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "50%",
-                      backgroundColor: "var(--primary)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "white",
-                      fontSize: "1.5rem",
-                    }}
-                  >
-                    👩
-                  </div>
-                  <div>
-                    <p
-                      style={{
-                        fontWeight: "600",
-                        color: "var(--primary-dark)",
-                      }}
-                    >
-                      {product.sellerBusinessName || product.sellerName}
-                    </p>
-                    <p
-                      style={{ fontSize: "0.9rem", color: "var(--text-light)" }}
-                    >
-                      {product.sellerStory || "Passionate artisan creating handmade work."}
-                    </p>
-                    <Link
-                      href={`/seller/${encodeURIComponent(product.sellerEmail)}`}
-                      style={{
-                        fontSize: "0.9rem",
-                        color: "var(--primary)",
-                        textDecoration: "underline",
-                        display: "inline-block",
-                        marginTop: "0.5rem",
-                      }}
-                    >
-                      View seller profile
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              {/* Add to Cart */}
               <div
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
-                  gap: "1rem",
+                  gap: "3rem",
+                  marginTop: "2rem",
                 }}
               >
-                <input
-                  type="number"
-                  defaultValue="1"
-                  min="1"
-                  style={{
-                    padding: "0.75rem",
-                    borderRadius: "4px",
-                    border: "1px solid var(--primary)",
-                    fontSize: "1rem",
-                  }}
-                />
-                <button
-                  style={{
-                    backgroundColor: "var(--primary)",
-                    color: "white",
-                    padding: "0.75rem",
-                    borderRadius: "4px",
-                    border: "none",
-                    fontSize: "1rem",
-                    fontWeight: "700",
-                    cursor: "pointer",
-                  }}
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ marginTop: "4rem" }}>
-            <h2
-              style={{
-                fontSize: "2rem",
-                color: "var(--primary-dark)",
-                marginBottom: "2rem",
-              }}
-            >
-              Ratings & Reviews
-            </h2>
-
-            <form
-              onSubmit={submitReview}
-              style={{
-                backgroundColor: "white",
-                border: "1px solid var(--primary)",
-                borderRadius: "8px",
-                padding: "1.5rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              <h3 style={{ color: "var(--primary-dark)", marginBottom: "0.75rem" }}>
-                Leave a Review
-              </h3>
-              <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.75rem" }}>
-                <label style={{ color: "var(--text-light)" }}>Rating:</label>
-                <select
-                  value={rating}
-                  onChange={(event) => setRating(Number(event.target.value))}
-                  style={{ border: "1px solid var(--primary)", borderRadius: "4px", padding: "0.3rem" }}
-                >
-                  {[5, 4, 3, 2, 1].map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <textarea
-                rows={3}
-                placeholder="Share your experience with this product"
-                value={reviewText}
-                onChange={(event) => setReviewText(event.target.value)}
-                style={{
-                  width: "100%",
-                  border: "1px solid var(--primary)",
-                  borderRadius: "4px",
-                  padding: "0.75rem",
-                  fontFamily: "inherit",
-                  marginBottom: "0.75rem",
-                }}
-              />
-              <button
-                type="submit"
-                disabled={isSubmittingReview}
-                style={{
-                  backgroundColor: "var(--primary)",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  padding: "0.6rem 1rem",
-                  fontWeight: "600",
-                  cursor: isSubmittingReview ? "not-allowed" : "pointer",
-                  opacity: isSubmittingReview ? 0.7 : 1,
-                }}
-              >
-                {isSubmittingReview ? "Submitting..." : "Submit Review"}
-              </button>
-              {reviewMessage && (
-                <p style={{ marginTop: "0.75rem", color: "var(--primary-dark)" }}>
-                  {reviewMessage}
-                </p>
-              )}
-            </form>
-
-            <div style={{ display: "grid", gap: "1rem" }}>
-              {product.reviews.map((review) => (
+                {/* Product Image */}
                 <div
-                  key={review.id}
+                  style={{
+                    backgroundColor: "var(--accent)",
+                    borderRadius: "8px",
+                    border: "2px solid var(--primary)",
+                    padding: "3rem",
+                    textAlign: "center",
+                    fontSize: "8rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {product.imageUrl || "🧵"}
+                </div>
+
+                {/* Product Details */}
+                <div>
+                  <div
+                    style={{
+                      backgroundColor: "var(--primary)",
+                      color: "white",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "4px",
+                      display: "inline-block",
+                      marginBottom: "1rem",
+                      fontSize: "0.9rem",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {product.category[0]?.toUpperCase() +
+                      product.category.slice(1)}
+                  </div>
+
+                  <h1
+                    style={{
+                      fontSize: "2.5rem",
+                      color: "var(--primary-dark)",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    {product.name}
+                  </h1>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1rem",
+                      marginBottom: "2rem",
+                    }}
+                  >
+                    <span style={{ fontSize: "1.3rem" }}>⭐⭐⭐⭐⭐</span>
+                    <span style={{ color: "var(--text-light)" }}>
+                      {product.reviews.length} reviews
+                      {product.reviews.length > 0
+                        ? ` • Avg ${averageRating.toFixed(1)}/5`
+                        : ""}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: "2rem",
+                      fontWeight: "bold",
+                      color: "var(--primary)",
+                      marginBottom: "2rem",
+                    }}
+                  >
+                    ${product.price.toFixed(2)}
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      padding: "1.5rem",
+                      borderRadius: "8px",
+                      marginBottom: "2rem",
+                    }}
+                  >
+                    <h3
+                      style={{
+                        marginBottom: "1rem",
+                        color: "var(--primary-dark)",
+                      }}
+                    >
+                      About This Item
+                    </h3>
+                    <p
+                      style={{
+                        lineHeight: "1.7",
+                        color: "var(--text-light)",
+                      }}
+                    >
+                      {product.description}
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      padding: "1.5rem",
+                      borderRadius: "8px",
+                      marginBottom: "2rem",
+                    }}
+                  >
+                    <h3
+                      style={{
+                        marginBottom: "1rem",
+                        color: "var(--primary-dark)",
+                      }}
+                    >
+                      Details
+                    </h3>
+                    <ul style={{ lineHeight: "2", color: "var(--text-light)" }}>
+                      <li>
+                        <strong>Material:</strong> Genuine leather
+                      </li>
+                      <li>
+                        <strong>Dimensions:</strong> 12&quot; W &times; 10&quot;
+                        H &times; 5&quot; D
+                      </li>
+                      <li>
+                        <strong>Closure:</strong> Magnetic snap
+                      </li>
+                      <li>
+                        <strong>Interior:</strong> Lined with cotton
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      padding: "1.5rem",
+                      borderRadius: "8px",
+                      marginBottom: "2rem",
+                    }}
+                  >
+                    <h3
+                      style={{
+                        marginBottom: "1rem",
+                        color: "var(--primary-dark)",
+                      }}
+                    >
+                      About the Artisan
+                    </h3>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "1rem",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          borderRadius: "50%",
+                          backgroundColor: "var(--primary)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "white",
+                          fontSize: "1.5rem",
+                        }}
+                      >
+                        👩
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontWeight: "600",
+                            color: "var(--primary-dark)",
+                          }}
+                        >
+                          {product.sellerBusinessName || product.sellerName}
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "0.9rem",
+                            color: "var(--text-light)",
+                          }}
+                        >
+                          {product.sellerStory ||
+                            "Passionate artisan creating handmade work."}
+                        </p>
+                        <Link
+                          href={`/seller/${encodeURIComponent(product.sellerEmail)}`}
+                          style={{
+                            fontSize: "0.9rem",
+                            color: "var(--primary)",
+                            textDecoration: "underline",
+                            display: "inline-block",
+                            marginTop: "0.5rem",
+                          }}
+                        >
+                          View seller profile
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Add to Cart */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "1rem",
+                    }}
+                  >
+                    <input
+                      type="number"
+                      defaultValue="1"
+                      min="1"
+                      style={{
+                        padding: "0.75rem",
+                        borderRadius: "4px",
+                        border: "1px solid var(--primary)",
+                        fontSize: "1rem",
+                      }}
+                    />
+                    <button
+                      style={{
+                        backgroundColor: "var(--primary)",
+                        color: "white",
+                        padding: "0.75rem",
+                        borderRadius: "4px",
+                        border: "none",
+                        fontSize: "1rem",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: "4rem" }}>
+                <h2
+                  style={{
+                    fontSize: "2rem",
+                    color: "var(--primary-dark)",
+                    marginBottom: "2rem",
+                  }}
+                >
+                  Ratings & Reviews
+                </h2>
+
+                <form
+                  onSubmit={submitReview}
                   style={{
                     backgroundColor: "white",
                     border: "1px solid var(--primary)",
                     borderRadius: "8px",
-                    padding: "1rem",
+                    padding: "1.5rem",
+                    marginBottom: "1.5rem",
                   }}
                 >
-                  <p style={{ fontWeight: "700", color: "var(--primary-dark)" }}>
-                    {review.reviewerName} • {"⭐".repeat(review.rating)}
-                  </p>
-                  <p style={{ color: "var(--text-light)", marginTop: "0.4rem" }}>
-                    {review.review}
-                  </p>
+                  <h3
+                    style={{
+                      color: "var(--primary-dark)",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    Leave a Review
+                  </h3>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.75rem",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <label style={{ color: "var(--text-light)" }}>
+                      Rating:
+                    </label>
+                    <select
+                      value={rating}
+                      onChange={(event) =>
+                        setRating(Number(event.target.value))
+                      }
+                      style={{
+                        border: "1px solid var(--primary)",
+                        borderRadius: "4px",
+                        padding: "0.3rem",
+                      }}
+                    >
+                      {[5, 4, 3, 2, 1].map((value) => (
+                        <option key={value} value={value}>
+                          {value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <textarea
+                    rows={3}
+                    placeholder="Share your experience with this product"
+                    value={reviewText}
+                    onChange={(event) => setReviewText(event.target.value)}
+                    style={{
+                      width: "100%",
+                      border: "1px solid var(--primary)",
+                      borderRadius: "4px",
+                      padding: "0.75rem",
+                      fontFamily: "inherit",
+                      marginBottom: "0.75rem",
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmittingReview}
+                    style={{
+                      backgroundColor: "var(--primary)",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      padding: "0.6rem 1rem",
+                      fontWeight: "600",
+                      cursor: isSubmittingReview ? "not-allowed" : "pointer",
+                      opacity: isSubmittingReview ? 0.7 : 1,
+                    }}
+                  >
+                    {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                  </button>
+                  {reviewMessage && (
+                    <p
+                      style={{
+                        marginTop: "0.75rem",
+                        color: "var(--primary-dark)",
+                      }}
+                    >
+                      {reviewMessage}
+                    </p>
+                  )}
+                </form>
+
+                <div style={{ display: "grid", gap: "1rem" }}>
+                  {product.reviews.map((review) => (
+                    <div
+                      key={review.id}
+                      style={{
+                        backgroundColor: "white",
+                        border: "1px solid var(--primary)",
+                        borderRadius: "8px",
+                        padding: "1rem",
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontWeight: "700",
+                          color: "var(--primary-dark)",
+                        }}
+                      >
+                        {review.reviewerName} • {"⭐".repeat(review.rating)}
+                      </p>
+                      <p
+                        style={{
+                          color: "var(--text-light)",
+                          marginTop: "0.4rem",
+                        }}
+                      >
+                        {review.review}
+                      </p>
+                    </div>
+                  ))}
+                  {product.reviews.length === 0 && (
+                    <p style={{ color: "var(--text-light)" }}>
+                      No reviews yet. Be the first to leave one.
+                    </p>
+                  )}
                 </div>
-              ))}
-              {product.reviews.length === 0 && (
-                <p style={{ color: "var(--text-light)" }}>
-                  No reviews yet. Be the first to leave one.
-                </p>
-              )}
-            </div>
-          </div>
-          </>
+              </div>
+            </>
           ) : null}
         </div>
       </section>

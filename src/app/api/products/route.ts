@@ -34,30 +34,49 @@ export async function POST(request: Request) {
   try {
     body = (await request.json()) as CreateProductBody;
   } catch {
-    return NextResponse.json({ message: "Invalid request payload." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid request payload." },
+      { status: 400 },
+    );
   }
 
   const sellerEmail = body.sellerEmail?.trim().toLowerCase() ?? "";
   const name = body.name?.trim() ?? "";
   const description = body.description?.trim() ?? "";
   const category = body.category?.trim() ?? "";
-  const price = typeof body.price === "number" ? body.price : Number(body.price);
+  const price =
+    typeof body.price === "number" ? body.price : Number(body.price);
 
-  if (!sellerEmail || !name || !description || !category || Number.isNaN(price)) {
+  if (
+    !sellerEmail ||
+    !name ||
+    !description ||
+    !category ||
+    Number.isNaN(price)
+  ) {
     return NextResponse.json(
-      { message: "sellerEmail, name, description, category, and price are required." },
+      {
+        message:
+          "sellerEmail, name, description, category, and price are required.",
+      },
       { status: 400 },
     );
   }
 
   if (price <= 0) {
-    return NextResponse.json({ message: "Price must be greater than 0." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Price must be greater than 0." },
+      { status: 400 },
+    );
   }
 
   const seller = await getUserByEmail(sellerEmail);
   if (!seller || seller.accountType !== "artisan") {
     return NextResponse.json(
-      { message: "Only authenticated artisan accounts can create product listings." },
+      {
+        message:
+          "Only authenticated artisan accounts can create product listings.",
+      },
       { status: 403 },
     );
   }

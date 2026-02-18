@@ -84,7 +84,8 @@ const seedProducts: ProductItem[] = [
     sellerStory:
       "We hand-throw small-batch ceramics that blend modern design with timeless utility.",
     name: "Hand-Thrown Ceramic Bowl",
-    description: "Food-safe ceramic bowl, perfect for soups, salads, and display.",
+    description:
+      "Food-safe ceramic bowl, perfect for soups, salads, and display.",
     category: "pottery",
     price: 65,
     imageUrl: "🏺",
@@ -100,7 +101,11 @@ const ensureStoreExists = async () => {
     await readFile(marketplaceFilePath, "utf-8");
   } catch {
     const seed: MarketplaceData = { products: seedProducts };
-    await writeFile(marketplaceFilePath, JSON.stringify(seed, null, 2), "utf-8");
+    await writeFile(
+      marketplaceFilePath,
+      JSON.stringify(seed, null, 2),
+      "utf-8",
+    );
   }
 };
 
@@ -136,8 +141,14 @@ export const listProducts = async (filters?: {
     const categoryOk = filters?.category
       ? product.category.toLowerCase() === filters.category.toLowerCase()
       : true;
-    const minOk = filters?.minPrice !== undefined ? product.price >= filters.minPrice : true;
-    const maxOk = filters?.maxPrice !== undefined ? product.price <= filters.maxPrice : true;
+    const minOk =
+      filters?.minPrice !== undefined
+        ? product.price >= filters.minPrice
+        : true;
+    const maxOk =
+      filters?.maxPrice !== undefined
+        ? product.price <= filters.maxPrice
+        : true;
     return categoryOk && minOk && maxOk;
   });
 };
@@ -174,7 +185,10 @@ export const createProduct = async (input: CreateProductInput) => {
   return product;
 };
 
-export const addReviewToProduct = async (productId: number, input: AddReviewInput) => {
+export const addReviewToProduct = async (
+  productId: number,
+  input: AddReviewInput,
+) => {
   const data = await loadData();
   const product = data.products.find((item) => item.id === productId);
 
@@ -205,7 +219,9 @@ export const addReviewToProduct = async (productId: number, input: AddReviewInpu
 export const listProductsBySeller = async (sellerEmail: string) => {
   const normalizedEmail = sellerEmail.trim().toLowerCase();
   const data = await loadData();
-  return data.products.filter((product) => product.sellerEmail === normalizedEmail);
+  return data.products.filter(
+    (product) => product.sellerEmail === normalizedEmail,
+  );
 };
 
 export const updateSellerStory = async (sellerEmail: string, story: string) => {

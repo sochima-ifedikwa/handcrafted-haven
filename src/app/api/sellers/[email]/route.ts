@@ -49,7 +49,10 @@ export async function PATCH(
   try {
     body = (await request.json()) as SellerProfileUpdateBody;
   } catch {
-    return NextResponse.json({ message: "Invalid request payload." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid request payload." },
+      { status: 400 },
+    );
   }
 
   const requesterEmail = body.requesterEmail?.trim().toLowerCase() ?? "";

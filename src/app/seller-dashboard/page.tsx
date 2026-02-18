@@ -85,11 +85,14 @@ export default function SellerDashboard() {
       return;
     }
 
-    const response = await fetch(`/api/sellers/${encodeURIComponent(currentUser.email)}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ requesterEmail: currentUser.email, story }),
-    });
+    const response = await fetch(
+      `/api/sellers/${encodeURIComponent(currentUser.email)}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requesterEmail: currentUser.email, story }),
+      },
+    );
 
     const payload = (await response.json()) as { message?: string };
 
@@ -143,7 +146,9 @@ export default function SellerDashboard() {
   if (!currentUser) {
     return (
       <section style={{ padding: "3rem", textAlign: "center" }}>
-        <p style={{ marginBottom: "1rem" }}>Please sign in to access seller tools.</p>
+        <p style={{ marginBottom: "1rem" }}>
+          Please sign in to access seller tools.
+        </p>
         <Link href="/login">Go to Login</Link>
       </section>
     );
@@ -223,7 +228,14 @@ export default function SellerDashboard() {
           backgroundColor: "var(--background)",
         }}
       >
-        <div style={{ maxWidth: "1100px", margin: "0 auto", display: "grid", gap: "1.5rem" }}>
+        <div
+          style={{
+            maxWidth: "1100px",
+            margin: "0 auto",
+            display: "grid",
+            gap: "1.5rem",
+          }}
+        >
           <section
             style={{
               backgroundColor: "white",
@@ -232,8 +244,12 @@ export default function SellerDashboard() {
               border: "1px solid var(--primary)",
             }}
           >
-            <h1 style={{ color: "var(--primary-dark)", marginBottom: "0.5rem" }}>
-              Seller Profile: {profile?.sellerBusinessName || `${currentUser.firstName} ${currentUser.lastName}`}
+            <h1
+              style={{ color: "var(--primary-dark)", marginBottom: "0.5rem" }}
+            >
+              Seller Profile:{" "}
+              {profile?.sellerBusinessName ||
+                `${currentUser.firstName} ${currentUser.lastName}`}
             </h1>
             <p style={{ color: "var(--text-light)", marginBottom: "1rem" }}>
               Share your story and showcase your handcrafted collection.
@@ -277,18 +293,30 @@ export default function SellerDashboard() {
               border: "1px solid var(--primary)",
             }}
           >
-            <h2 style={{ color: "var(--primary-dark)", marginBottom: "0.75rem" }}>
+            <h2
+              style={{ color: "var(--primary-dark)", marginBottom: "0.75rem" }}
+            >
               Add Product Listing
             </h2>
-            <form onSubmit={createListing} style={{ display: "grid", gap: "0.75rem" }}>
+            <form
+              onSubmit={createListing}
+              style={{ display: "grid", gap: "0.75rem" }}
+            >
               <input
                 value={newProduct.name}
                 onChange={(event) =>
-                  setNewProduct((previous) => ({ ...previous, name: event.target.value }))
+                  setNewProduct((previous) => ({
+                    ...previous,
+                    name: event.target.value,
+                  }))
                 }
                 placeholder="Product name"
                 required
-                style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px" }}
+                style={{
+                  padding: "0.65rem",
+                  border: "1px solid var(--primary)",
+                  borderRadius: "4px",
+                }}
               />
               <textarea
                 value={newProduct.description}
@@ -301,17 +329,41 @@ export default function SellerDashboard() {
                 placeholder="Product description"
                 required
                 rows={3}
-                style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px", fontFamily: "inherit" }}
+                style={{
+                  padding: "0.65rem",
+                  border: "1px solid var(--primary)",
+                  borderRadius: "4px",
+                  fontFamily: "inherit",
+                }}
               />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  gap: "0.75rem",
+                }}
+              >
                 <select
                   value={newProduct.category}
                   onChange={(event) =>
-                    setNewProduct((previous) => ({ ...previous, category: event.target.value }))
+                    setNewProduct((previous) => ({
+                      ...previous,
+                      category: event.target.value,
+                    }))
                   }
-                  style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px" }}
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
                 >
-                  {["accessories", "pottery", "textiles", "home", "jewelry"].map((option) => (
+                  {[
+                    "accessories",
+                    "pottery",
+                    "textiles",
+                    "home",
+                    "jewelry",
+                  ].map((option) => (
                     <option key={option} value={option}>
                       {option[0].toUpperCase() + option.slice(1)}
                     </option>
@@ -323,19 +375,33 @@ export default function SellerDashboard() {
                   min="0.01"
                   value={newProduct.price}
                   onChange={(event) =>
-                    setNewProduct((previous) => ({ ...previous, price: event.target.value }))
+                    setNewProduct((previous) => ({
+                      ...previous,
+                      price: event.target.value,
+                    }))
                   }
                   placeholder="Price"
                   required
-                  style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px" }}
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
                 />
                 <input
                   value={newProduct.imageUrl}
                   onChange={(event) =>
-                    setNewProduct((previous) => ({ ...previous, imageUrl: event.target.value }))
+                    setNewProduct((previous) => ({
+                      ...previous,
+                      imageUrl: event.target.value,
+                    }))
                   }
                   placeholder="Image URL or emoji"
-                  style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px" }}
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
                 />
               </div>
               <button
@@ -363,13 +429,21 @@ export default function SellerDashboard() {
               border: "1px solid var(--primary)",
             }}
           >
-            <h2 style={{ color: "var(--primary-dark)", marginBottom: "0.75rem" }}>
+            <h2
+              style={{ color: "var(--primary-dark)", marginBottom: "0.75rem" }}
+            >
               My Curated Collection
             </h2>
             {isLoading ? (
               <p style={{ color: "var(--text-light)" }}>Loading listings...</p>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: "1rem" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))",
+                  gap: "1rem",
+                }}
+              >
                 {(profile?.products ?? []).map((item) => (
                   <Link
                     key={item.id}
@@ -381,23 +455,46 @@ export default function SellerDashboard() {
                       backgroundColor: "var(--accent)",
                     }}
                   >
-                    <p style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>{item.imageUrl || "🧵"}</p>
-                    <p style={{ fontWeight: "700", color: "var(--primary-dark)" }}>{item.name}</p>
-                    <p style={{ color: "var(--text-light)", fontSize: "0.9rem" }}>{item.description}</p>
-                    <p style={{ marginTop: "0.5rem", color: "var(--primary)", fontWeight: "700" }}>
+                    <p style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>
+                      {item.imageUrl || "🧵"}
+                    </p>
+                    <p
+                      style={{
+                        fontWeight: "700",
+                        color: "var(--primary-dark)",
+                      }}
+                    >
+                      {item.name}
+                    </p>
+                    <p
+                      style={{ color: "var(--text-light)", fontSize: "0.9rem" }}
+                    >
+                      {item.description}
+                    </p>
+                    <p
+                      style={{
+                        marginTop: "0.5rem",
+                        color: "var(--primary)",
+                        fontWeight: "700",
+                      }}
+                    >
                       ${item.price.toFixed(2)}
                     </p>
                   </Link>
                 ))}
                 {!profile || profile.products.length === 0 ? (
-                  <p style={{ color: "var(--text-light)" }}>No products yet. Add your first listing above.</p>
+                  <p style={{ color: "var(--text-light)" }}>
+                    No products yet. Add your first listing above.
+                  </p>
                 ) : null}
               </div>
             )}
           </section>
 
           {statusMessage && (
-            <p style={{ color: "var(--primary-dark)", fontWeight: "600" }}>{statusMessage}</p>
+            <p style={{ color: "var(--primary-dark)", fontWeight: "600" }}>
+              {statusMessage}
+            </p>
           )}
         </div>
       </main>

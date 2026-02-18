@@ -18,7 +18,10 @@ export async function POST(
   const productId = Number(id);
 
   if (Number.isNaN(productId)) {
-    return NextResponse.json({ message: "Invalid product id." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid product id." },
+      { status: 400 },
+    );
   }
 
   let body: CreateReviewBody;
@@ -26,11 +29,15 @@ export async function POST(
   try {
     body = (await request.json()) as CreateReviewBody;
   } catch {
-    return NextResponse.json({ message: "Invalid request payload." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid request payload." },
+      { status: 400 },
+    );
   }
 
   const reviewerEmail = body.reviewerEmail?.trim().toLowerCase() ?? "";
-  const rating = typeof body.rating === "number" ? body.rating : Number(body.rating);
+  const rating =
+    typeof body.rating === "number" ? body.rating : Number(body.rating);
   const reviewText = body.review?.trim() ?? "";
 
   if (!reviewerEmail || Number.isNaN(rating) || !reviewText) {
@@ -41,7 +48,10 @@ export async function POST(
   }
 
   if (rating < 1 || rating > 5) {
-    return NextResponse.json({ message: "Rating must be between 1 and 5." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Rating must be between 1 and 5." },
+      { status: 400 },
+    );
   }
 
   const reviewer = await getUserByEmail(reviewerEmail);
@@ -60,7 +70,10 @@ export async function POST(
   });
 
   if (!review) {
-    return NextResponse.json({ message: "Product not found." }, { status: 404 });
+    return NextResponse.json(
+      { message: "Product not found." },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json({ review }, { status: 201 });
