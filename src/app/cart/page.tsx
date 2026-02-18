@@ -115,10 +115,15 @@ export default function CartPage() {
                 padding: "1.5rem",
               }}
             >
-              <p style={{ color: "var(--text-light)", marginBottom: "0.75rem" }}>
+              <p
+                style={{ color: "var(--text-light)", marginBottom: "0.75rem" }}
+              >
                 Your cart is empty.
               </p>
-              <Link href="/browse" style={{ color: "var(--primary)", fontWeight: "600" }}>
+              <Link
+                href="/browse"
+                style={{ color: "var(--primary)", fontWeight: "600" }}
+              >
                 Continue shopping
               </Link>
             </div>
@@ -146,10 +151,24 @@ export default function CartPage() {
                       alignItems: "center",
                     }}
                   >
-                    <div style={{ fontSize: "2rem" }}>{item.imageUrl || "🧵"}</div>
+                    <div style={{ fontSize: "2rem" }}>
+                      {item.imageUrl || "🧵"}
+                    </div>
                     <div>
-                      <p style={{ fontWeight: "700", color: "var(--primary-dark)" }}>{item.name}</p>
-                      <p style={{ color: "var(--text-light)", fontSize: "0.9rem" }}>
+                      <p
+                        style={{
+                          fontWeight: "700",
+                          color: "var(--primary-dark)",
+                        }}
+                      >
+                        {item.name}
+                      </p>
+                      <p
+                        style={{
+                          color: "var(--text-light)",
+                          fontSize: "0.9rem",
+                        }}
+                      >
                         ${item.price.toFixed(2)} each
                       </p>
                     </div>
@@ -202,10 +221,14 @@ export default function CartPage() {
                   padding: "1.25rem",
                 }}
               >
-                <h2 style={{ color: "var(--primary-dark)", marginBottom: "1rem" }}>
+                <h2
+                  style={{ color: "var(--primary-dark)", marginBottom: "1rem" }}
+                >
                   Checkout Summary
                 </h2>
-                <p style={{ color: "var(--text-light)", marginBottom: "0.5rem" }}>
+                <p
+                  style={{ color: "var(--text-light)", marginBottom: "0.5rem" }}
+                >
                   Items: {totalItems}
                 </p>
                 <p style={{ color: "var(--text-light)", marginBottom: "1rem" }}>

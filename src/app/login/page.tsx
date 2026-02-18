@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+import { useCartItems } from "@/lib/use-cart";
 
 type LoginFormData = {
   email: string;
@@ -20,10 +21,16 @@ const initialFormData: LoginFormData = {
 export default function LoginPage() {
   const router = useRouter();
   const currentUser = useCurrentUser();
+  const cartItems = useCartItems();
   const [formData, setFormData] = useState<LoginFormData>(initialFormData);
   const [formError, setFormError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const totalCartItems = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    [cartItems],
+  );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, value } = event.target;
@@ -152,6 +159,7 @@ export default function LoginPage() {
           </Link>
           <div style={{ display: "flex", gap: "1.5rem" }}>
             <Link href="/">Home</Link>
+            <Link href="/cart">Cart ({totalCartItems})</Link>
             {currentUser ? (
               <>
                 <Link href="/welcome">Welcome, {currentUser.firstName}</Link>

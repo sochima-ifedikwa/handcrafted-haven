@@ -476,7 +476,9 @@ export default function ProductPage() {
                       type="number"
                       value={quantity}
                       onChange={(event) =>
-                        setQuantity(Math.max(1, Number(event.target.value) || 1))
+                        setQuantity(
+                          Math.max(1, Number(event.target.value) || 1),
+                        )
                       }
                       min="1"
                       style={{

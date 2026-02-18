@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
 import { useCartItems } from "@/lib/use-cart";
@@ -247,33 +248,39 @@ export default function Home() {
           >
             {[
               {
+                id: 1,
                 name: "Artisan Leather Bag",
                 artist: "by Sarah Crafts",
                 price: "$89",
                 emoji: "👜",
               },
               {
+                id: 2,
                 name: "Hand-Thrown Ceramic Bowl",
                 artist: "by Clay Studio",
                 price: "$65",
                 emoji: "🏺",
               },
               {
+                id: 6,
                 name: "Knitted Wool Sweater",
                 artist: "by Yarn & Thread",
                 price: "$120",
                 emoji: "🧶",
               },
               {
+                id: 5,
                 name: "Wooden Jewelry Box",
                 artist: "by Timber & Gold",
                 price: "$75",
                 emoji: "📦",
               },
             ].map((product, idx) => (
-              <div
+              <Link
                 key={idx}
+                href={`/product/${product.id}`}
                 style={{
+                  display: "block",
                   backgroundColor: "white",
                   padding: "1.5rem",
                   borderRadius: "8px",
@@ -323,21 +330,20 @@ export default function Home() {
                 >
                   {product.price}
                 </p>
-                <button
+                <span
                   style={{
+                    display: "inline-block",
                     backgroundColor: "var(--primary)",
                     color: "white",
                     padding: "0.6rem 1.2rem",
                     borderRadius: "4px",
-                    border: "none",
-                    cursor: "pointer",
                     fontSize: "0.9rem",
                     fontWeight: "600",
                   }}
                 >
                   View Details
-                </button>
-              </div>
+                </span>
+              </Link>
             ))}
           </div>
 

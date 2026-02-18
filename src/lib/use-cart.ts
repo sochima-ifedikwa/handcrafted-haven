@@ -57,12 +57,11 @@ export const useCartItems = () => {
   return useMemo(() => parseCartItems(raw), [raw]);
 };
 
-export const addToCart = (
-  item: Omit<CartItem, "quantity">,
-  quantity = 1,
-) => {
+export const addToCart = (item: Omit<CartItem, "quantity">, quantity = 1) => {
   const existing = parseCartItems(getSnapshot());
-  const existingItem = existing.find((entry) => entry.productId === item.productId);
+  const existingItem = existing.find(
+    (entry) => entry.productId === item.productId,
+  );
 
   if (existingItem) {
     const next = existing.map((entry) =>

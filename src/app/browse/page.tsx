@@ -27,6 +27,7 @@ export default function BrowsePage() {
   const [category, setCategory] = useState("all");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [cartNotice, setCartNotice] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -84,6 +85,23 @@ export default function BrowsePage() {
     () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
     [cartItems],
   );
+
+  const handleAddToCart = (product: ProductItem) => {
+    addToCart(
+      {
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      },
+      1,
+    );
+
+    setCartNotice(`${product.name} added to cart.`);
+    window.setTimeout(() => {
+      setCartNotice("");
+    }, 1800);
+  };
 
   return (
     <>
@@ -253,6 +271,18 @@ export default function BrowsePage() {
             </p>
           )}
 
+          {cartNotice && (
+            <p
+              style={{
+                marginBottom: "1rem",
+                color: "var(--primary-dark)",
+                fontWeight: "600",
+              }}
+            >
+              {cartNotice} <Link href="/cart">View cart</Link>
+            </p>
+          )}
+
           {isLoading && (
             <p style={{ marginBottom: "2rem", color: "var(--text-light)" }}>
               Loading products...
@@ -359,17 +389,7 @@ export default function BrowsePage() {
                   </Link>
                   <button
                     type="button"
-                    onClick={() =>
-                      addToCart(
-                        {
-                          productId: product.id,
-                          name: product.name,
-                          price: product.price,
-                          imageUrl: product.imageUrl,
-                        },
-                        1,
-                      )
-                    }
+                    onClick={() => handleAddToCart(product)}
                     style={{
                       backgroundColor: "var(--primary)",
                       color: "white",

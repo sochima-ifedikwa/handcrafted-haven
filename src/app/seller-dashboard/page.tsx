@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+import { useCartItems } from "@/lib/use-cart";
 
 type ProductItem = {
   id: number;
@@ -23,6 +24,7 @@ type SellerProfile = {
 
 export default function SellerDashboard() {
   const currentUser = useCurrentUser();
+  const cartItems = useCartItems();
   const [profile, setProfile] = useState<SellerProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [statusMessage, setStatusMessage] = useState("");
@@ -34,6 +36,11 @@ export default function SellerDashboard() {
     price: "",
     imageUrl: "",
   });
+
+  const totalCartItems = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    [cartItems],
+  );
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -198,6 +205,7 @@ export default function SellerDashboard() {
             🎨 Handcrafted Haven
           </Link>
           <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+            <Link href="/cart">Cart ({totalCartItems})</Link>
             <span style={{ color: "var(--text-light)" }}>📱 Messages</span>
             <span style={{ color: "var(--text-light)" }}>
               👤 {currentUser ? currentUser.firstName : "Profile"}

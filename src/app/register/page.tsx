@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+import { useCartItems } from "@/lib/use-cart";
 
 type AccountType = "buyer" | "artisan";
 
@@ -34,10 +35,16 @@ const initialFormData: RegisterFormData = {
 export default function RegisterPage() {
   const router = useRouter();
   const currentUser = useCurrentUser();
+  const cartItems = useCartItems();
   const [formData, setFormData] = useState<RegisterFormData>(initialFormData);
   const [formError, setFormError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const totalCartItems = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    [cartItems],
+  );
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -186,6 +193,7 @@ export default function RegisterPage() {
           </Link>
           <div style={{ display: "flex", gap: "1.5rem" }}>
             <Link href="/">Home</Link>
+            <Link href="/cart">Cart ({totalCartItems})</Link>
             {currentUser ? (
               <>
                 <Link href="/welcome">Welcome, {currentUser.firstName}</Link>
