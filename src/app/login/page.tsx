@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { notifyAuthChange } from "@/lib/use-current-user";
+import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
 
 type LoginFormData = {
   email: string;
@@ -19,6 +19,7 @@ const initialFormData: LoginFormData = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const currentUser = useCurrentUser();
   const [formData, setFormData] = useState<LoginFormData>(initialFormData);
   const [formError, setFormError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -113,6 +114,13 @@ export default function LoginPage() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUser");
+    notifyAuthChange();
+    router.push("/");
+  };
+
   return (
     <>
       {/* Header */}
@@ -144,7 +152,27 @@ export default function LoginPage() {
           </Link>
           <div style={{ display: "flex", gap: "1.5rem" }}>
             <Link href="/">Home</Link>
-            <Link href="/register">Create Account</Link>
+            {currentUser ? (
+              <>
+                <Link href="/welcome">Welcome, {currentUser.firstName}</Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  style={{
+                    border: "none",
+                    background: "none",
+                    color: "var(--text-light)",
+                    cursor: "pointer",
+                    fontSize: "1rem",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link href="/register">Create Account</Link>
+            )}
           </div>
         </nav>
       </header>

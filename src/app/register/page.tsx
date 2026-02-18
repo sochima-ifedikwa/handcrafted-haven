@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
 
 type AccountType = "buyer" | "artisan";
 
@@ -32,6 +33,7 @@ const initialFormData: RegisterFormData = {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const currentUser = useCurrentUser();
   const [formData, setFormData] = useState<RegisterFormData>(initialFormData);
   const [formError, setFormError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
@@ -146,6 +148,13 @@ export default function RegisterPage() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUser");
+    notifyAuthChange();
+    router.push("/");
+  };
+
   return (
     <>
       {/* Header */}
@@ -177,7 +186,27 @@ export default function RegisterPage() {
           </Link>
           <div style={{ display: "flex", gap: "1.5rem" }}>
             <Link href="/">Home</Link>
-            <Link href="/login">Sign In</Link>
+            {currentUser ? (
+              <>
+                <Link href="/welcome">Welcome, {currentUser.firstName}</Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  style={{
+                    border: "none",
+                    background: "none",
+                    color: "var(--text-light)",
+                    cursor: "pointer",
+                    fontSize: "1rem",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link href="/login">Sign In</Link>
+            )}
           </div>
         </nav>
       </header>

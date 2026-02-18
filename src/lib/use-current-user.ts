@@ -24,7 +24,9 @@ const subscribe = (onStoreChange: () => void) => {
 };
 
 const getSnapshot = () =>
-  localStorage.getItem("currentUser") ?? sessionStorage.getItem("currentUser") ?? "";
+  localStorage.getItem("currentUser") ??
+  sessionStorage.getItem("currentUser") ??
+  "";
 
 const getServerSnapshot = () => "";
 
@@ -33,7 +35,11 @@ export const notifyAuthChange = () => {
 };
 
 export const useCurrentUser = (): CurrentUser | null => {
-  const rawUser = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const rawUser = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   return useMemo(() => {
     if (!rawUser) {

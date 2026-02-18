@@ -1,8 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
 
 export default function ProductPage() {
+  const currentUser = useCurrentUser();
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUser");
+    notifyAuthChange();
+    window.location.href = "/";
+  };
+
   return (
     <>
       {/* Header */}
@@ -35,9 +45,30 @@ export default function ProductPage() {
           >
             🎨 Handcrafted Haven
           </Link>
-          <div style={{ display: "flex", gap: "1.5rem" }}>
-            <a href="/browse">Browse</a>
-            <a href="/login">Login</a>
+          <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+            <Link href="/browse">Browse</Link>
+            {currentUser ? (
+              <Link href="/welcome">Welcome, {currentUser.firstName}</Link>
+            ) : (
+              <Link href="/login">Login</Link>
+            )}
+            {currentUser ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "white",
+                  padding: "0.45rem 0.95rem",
+                  borderRadius: "4px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                }}
+              >
+                Logout
+              </button>
+            ) : null}
           </div>
         </nav>
       </header>
@@ -51,7 +82,7 @@ export default function ProductPage() {
         }}
       >
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <a
+          <Link
             href="/browse"
             style={{
               color: "var(--primary)",
@@ -61,7 +92,7 @@ export default function ProductPage() {
             }}
           >
             ← Back to Browse
-          </a>
+          </Link>
 
           <div
             style={{

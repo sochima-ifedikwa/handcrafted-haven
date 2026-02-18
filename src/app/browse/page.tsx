@@ -1,8 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
 
 export default function BrowsePage() {
+  const currentUser = useCurrentUser();
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUser");
+    notifyAuthChange();
+    window.location.href = "/";
+  };
+
   const products = [
     {
       id: 1,
@@ -104,18 +114,39 @@ export default function BrowsePage() {
           </Link>
           <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
             <Link href="/">Home</Link>
-            <a href="/login">Login</a>
-            <a
-              href="/register"
-              style={{
-                backgroundColor: "var(--primary)",
-                color: "white",
-                padding: "0.5rem 1.25rem",
-                borderRadius: "4px",
-              }}
-            >
-              Join
-            </a>
+            {currentUser ? (
+              <Link href="/welcome">Welcome, {currentUser.firstName}</Link>
+            ) : (
+              <Link href="/login">Login</Link>
+            )}
+            {currentUser ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "white",
+                  padding: "0.5rem 1.25rem",
+                  borderRadius: "4px",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                href="/register"
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "white",
+                  padding: "0.5rem 1.25rem",
+                  borderRadius: "4px",
+                }}
+              >
+                Join
+              </Link>
+            )}
           </div>
         </nav>
       </header>

@@ -1,8 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
 
 export default function SellerDashboard() {
+  const currentUser = useCurrentUser();
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUser");
+    notifyAuthChange();
+    window.location.href = "/login";
+  };
+
   return (
     <>
       {/* Header */}
@@ -37,8 +47,12 @@ export default function SellerDashboard() {
           </Link>
           <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
             <span style={{ color: "var(--text-light)" }}>📱 Messages</span>
-            <span style={{ color: "var(--text-light)" }}>👤 Profile</span>
+            <span style={{ color: "var(--text-light)" }}>
+              👤 {currentUser ? currentUser.firstName : "Profile"}
+            </span>
             <button
+              type="button"
+              onClick={handleLogout}
               style={{
                 backgroundColor: "var(--primary)",
                 color: "white",
