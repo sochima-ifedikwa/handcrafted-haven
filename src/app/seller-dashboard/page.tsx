@@ -1,10 +1,39 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+
+type ProductItem = {
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  imageUrl?: string;
+};
+
+type SellerProfile = {
+  sellerEmail: string;
+  sellerName: string;
+  sellerBusinessName?: string;
+  sellerStory: string;
+  products: ProductItem[];
+};
 
 export default function SellerDashboard() {
   const currentUser = useCurrentUser();
+  const [profile, setProfile] = useState<SellerProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [statusMessage, setStatusMessage] = useState("");
+  const [story, setStory] = useState("");
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    description: "",
+    category: "accessories",
+    price: "",
+    imageUrl: "",
+  });
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -12,6 +41,124 @@ export default function SellerDashboard() {
     notifyAuthChange();
     window.location.href = "/login";
   };
+
+  const loadProfile = async () => {
+    if (!currentUser) {
+      return;
+    }
+
+    setIsLoading(true);
+    setStatusMessage("");
+
+    try {
+      const response = await fetch(
+        `/api/sellers/${encodeURIComponent(currentUser.email)}`,
+      );
+      const payload = (await response.json()) as {
+        profile?: SellerProfile;
+        message?: string;
+      };
+
+      if (!response.ok || !payload.profile) {
+        throw new Error(payload.message || "Unable to load seller profile.");
+      }
+
+      setProfile(payload.profile);
+      setStory(payload.profile.sellerStory || "");
+    } catch (error) {
+      setStatusMessage(
+        error instanceof Error ? error.message : "Unable to load profile.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser?.accountType === "artisan") {
+      void loadProfile();
+    }
+  }, [currentUser?.email, currentUser?.accountType]);
+
+  const saveStory = async () => {
+    if (!currentUser) {
+      return;
+    }
+
+    const response = await fetch(`/api/sellers/${encodeURIComponent(currentUser.email)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ requesterEmail: currentUser.email, story }),
+    });
+
+    const payload = (await response.json()) as { message?: string };
+
+    if (!response.ok) {
+      setStatusMessage(payload.message || "Unable to update seller story.");
+      return;
+    }
+
+    setStatusMessage("Seller story updated.");
+    await loadProfile();
+  };
+
+  const createListing = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!currentUser) {
+      return;
+    }
+
+    const response = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sellerEmail: currentUser.email,
+        name: newProduct.name,
+        description: newProduct.description,
+        category: newProduct.category,
+        price: Number(newProduct.price),
+        imageUrl: newProduct.imageUrl || undefined,
+      }),
+    });
+
+    const payload = (await response.json()) as { message?: string };
+
+    if (!response.ok) {
+      setStatusMessage(payload.message || "Unable to create product listing.");
+      return;
+    }
+
+    setNewProduct({
+      name: "",
+      description: "",
+      category: "accessories",
+      price: "",
+      imageUrl: "",
+    });
+    setStatusMessage("Product listing created.");
+    await loadProfile();
+  };
+
+  if (!currentUser) {
+    return (
+      <section style={{ padding: "3rem", textAlign: "center" }}>
+        <p style={{ marginBottom: "1rem" }}>Please sign in to access seller tools.</p>
+        <Link href="/login">Go to Login</Link>
+      </section>
+    );
+  }
+
+  if (currentUser.accountType !== "artisan") {
+    return (
+      <section style={{ padding: "3rem", textAlign: "center" }}>
+        <p style={{ marginBottom: "1rem" }}>
+          Seller profiles are available for artisan accounts only.
+        </p>
+        <Link href="/">Go Home</Link>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -69,323 +216,191 @@ export default function SellerDashboard() {
         </nav>
       </header>
 
-      <div style={{ display: "flex", minHeight: "calc(100vh - 70px)" }}>
-        {/* Sidebar */}
-        <aside
-          style={{
-            width: "250px",
-            backgroundColor: "var(--accent)",
-            borderRight: "1px solid var(--primary)",
-            padding: "2rem 0",
-          }}
-        >
-          <nav style={{ display: "flex", flexDirection: "column" }}>
-            {[
-              { label: "Dashboard", icon: "📊" },
-              { label: "My Products", icon: "📦" },
-              { label: "Orders", icon: "🛒" },
-              { label: "Sales Analytics", icon: "📈" },
-              { label: "Shop Settings", icon: "⚙️" },
-              { label: "Help & Support", icon: "❓" },
-            ].map((item) => (
-              <a
-                key={item.label}
-                href="#"
-                style={{
-                  padding: "1rem 1.5rem",
-                  color: "var(--primary-dark)",
-                  fontWeight: "600",
-                  borderLeft: "4px solid transparent",
-                  display: "flex",
-                  gap: "1rem",
-                  alignItems: "center",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--primary)";
-                  e.currentTarget.style.color = "white";
-                  e.currentTarget.style.borderLeftColor = "var(--secondary)";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = "var(--primary-dark)";
-                  e.currentTarget.style.borderLeftColor = "transparent";
-                }}
-              >
-                <span>{item.icon}</span>
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main Content */}
-        <main
-          style={{
-            flex: 1,
-            padding: "2rem",
-            backgroundColor: "var(--background)",
-          }}
-        >
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            {/* Welcome Section */}
-            <div
+      <main
+        style={{
+          minHeight: "calc(100vh - 70px)",
+          padding: "2rem",
+          backgroundColor: "var(--background)",
+        }}
+      >
+        <div style={{ maxWidth: "1100px", margin: "0 auto", display: "grid", gap: "1.5rem" }}>
+          <section
+            style={{
+              backgroundColor: "white",
+              padding: "1.5rem",
+              borderRadius: "8px",
+              border: "1px solid var(--primary)",
+            }}
+          >
+            <h1 style={{ color: "var(--primary-dark)", marginBottom: "0.5rem" }}>
+              Seller Profile: {profile?.sellerBusinessName || `${currentUser.firstName} ${currentUser.lastName}`}
+            </h1>
+            <p style={{ color: "var(--text-light)", marginBottom: "1rem" }}>
+              Share your story and showcase your handcrafted collection.
+            </p>
+            <textarea
+              value={story}
+              onChange={(event) => setStory(event.target.value)}
+              rows={4}
+              placeholder="Tell customers about your craft journey"
               style={{
-                backgroundColor: "white",
-                padding: "2rem",
-                borderRadius: "8px",
+                width: "100%",
                 border: "1px solid var(--primary)",
-                marginBottom: "2rem",
+                borderRadius: "4px",
+                padding: "0.75rem",
+                fontFamily: "inherit",
               }}
-            >
-              <h1
-                style={{
-                  fontSize: "2rem",
-                  color: "var(--primary-dark)",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                Welcome back, Sarah! 👋
-              </h1>
-              <p style={{ color: "var(--text-light)" }}>
-                Here&apos;s your shop performance for this month
-              </p>
-            </div>
-
-            {/* Stats Grid */}
-            <div
+            />
+            <button
+              type="button"
+              onClick={saveStory}
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                gap: "1.5rem",
-                marginBottom: "2rem",
+                marginTop: "0.75rem",
+                backgroundColor: "var(--primary)",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                padding: "0.6rem 1rem",
+                cursor: "pointer",
+                fontWeight: "600",
               }}
             >
-              {[
-                {
-                  label: "Total Sales",
-                  value: "$4,230",
-                  change: "+12%",
-                  icon: "💰",
-                },
-                {
-                  label: "Orders This Month",
-                  value: "24",
-                  change: "+8%",
-                  icon: "📦",
-                },
-                {
-                  label: "Total Revenue",
-                  value: "$12,840",
-                  change: "+15%",
-                  icon: "💵",
-                },
-                {
-                  label: "Avg Rating",
-                  value: "4.8/5",
-                  change: "⭐",
-                  icon: "⭐",
-                },
-              ].map((stat, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    backgroundColor: "white",
-                    padding: "1.5rem",
-                    borderRadius: "8px",
-                    border: "1px solid var(--primary)",
-                  }}
+              Save Story
+            </button>
+          </section>
+
+          <section
+            style={{
+              backgroundColor: "white",
+              padding: "1.5rem",
+              borderRadius: "8px",
+              border: "1px solid var(--primary)",
+            }}
+          >
+            <h2 style={{ color: "var(--primary-dark)", marginBottom: "0.75rem" }}>
+              Add Product Listing
+            </h2>
+            <form onSubmit={createListing} style={{ display: "grid", gap: "0.75rem" }}>
+              <input
+                value={newProduct.name}
+                onChange={(event) =>
+                  setNewProduct((previous) => ({ ...previous, name: event.target.value }))
+                }
+                placeholder="Product name"
+                required
+                style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px" }}
+              />
+              <textarea
+                value={newProduct.description}
+                onChange={(event) =>
+                  setNewProduct((previous) => ({
+                    ...previous,
+                    description: event.target.value,
+                  }))
+                }
+                placeholder="Product description"
+                required
+                rows={3}
+                style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px", fontFamily: "inherit" }}
+              />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
+                <select
+                  value={newProduct.category}
+                  onChange={(event) =>
+                    setNewProduct((previous) => ({ ...previous, category: event.target.value }))
+                  }
+                  style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px" }}
                 >
-                  <div
-                    style={{
-                      fontSize: "2rem",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    {stat.icon}
-                  </div>
-                  <p
-                    style={{
-                      color: "var(--text-light)",
-                      fontSize: "0.9rem",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    {stat.label}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "1.8rem",
-                      fontWeight: "bold",
-                      color: "var(--primary-dark)",
-                    }}
-                  >
-                    {stat.value}
-                  </p>
-                  <p style={{ fontSize: "0.85rem", color: "var(--secondary)" }}>
-                    {stat.change}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* Recent Orders */}
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: "2rem",
-                borderRadius: "8px",
-                border: "1px solid var(--primary)",
-                marginBottom: "2rem",
-              }}
-            >
-              <h2
-                style={{
-                  fontSize: "1.5rem",
-                  color: "var(--primary-dark)",
-                  marginBottom: "1rem",
-                }}
-              >
-                Recent Orders
-              </h2>
-              <table
-                style={{
-                  width: "100%",
-                  borderCollapse: "collapse",
-                }}
-              >
-                <thead>
-                  <tr style={{ borderBottom: "2px solid var(--primary)" }}>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "1rem",
-                        color: "var(--primary-dark)",
-                      }}
-                    >
-                      Order ID
-                    </th>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "1rem",
-                        color: "var(--primary-dark)",
-                      }}
-                    >
-                      Customer
-                    </th>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "1rem",
-                        color: "var(--primary-dark)",
-                      }}
-                    >
-                      Amount
-                    </th>
-                    <th
-                      style={{
-                        textAlign: "left",
-                        padding: "1rem",
-                        color: "var(--primary-dark)",
-                      }}
-                    >
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <tr
-                      key={i}
-                      style={{
-                        borderBottom: "1px solid var(--accent)",
-                      }}
-                    >
-                      <td style={{ padding: "1rem" }}>#{10001 + i}</td>
-                      <td
-                        style={{ padding: "1rem", color: "var(--text-light)" }}
-                      >
-                        Customer {i}
-                      </td>
-                      <td style={{ padding: "1rem", fontWeight: "600" }}>
-                        ${89 + i * 10}
-                      </td>
-                      <td style={{ padding: "1rem" }}>
-                        <span
-                          style={{
-                            backgroundColor: "var(--secondary)",
-                            color: "var(--primary-dark)",
-                            padding: "0.4rem 0.8rem",
-                            borderRadius: "4px",
-                            fontSize: "0.85rem",
-                            fontWeight: "600",
-                          }}
-                        >
-                          {i % 2 === 0 ? "Delivered" : "Processing"}
-                        </span>
-                      </td>
-                    </tr>
+                  {["accessories", "pottery", "textiles", "home", "jewelry"].map((option) => (
+                    <option key={option} value={option}>
+                      {option[0].toUpperCase() + option.slice(1)}
+                    </option>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </select>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  value={newProduct.price}
+                  onChange={(event) =>
+                    setNewProduct((previous) => ({ ...previous, price: event.target.value }))
+                  }
+                  placeholder="Price"
+                  required
+                  style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px" }}
+                />
+                <input
+                  value={newProduct.imageUrl}
+                  onChange={(event) =>
+                    setNewProduct((previous) => ({ ...previous, imageUrl: event.target.value }))
+                  }
+                  placeholder="Image URL or emoji"
+                  style={{ padding: "0.65rem", border: "1px solid var(--primary)", borderRadius: "4px" }}
+                />
+              </div>
+              <button
+                type="submit"
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  padding: "0.7rem 1rem",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                }}
+              >
+                Create Listing
+              </button>
+            </form>
+          </section>
 
-            {/* Quick Actions */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "1.5rem",
-              }}
-            >
-              {[
-                {
-                  label: "Add New Product",
-                  icon: "➕",
-                  color: "var(--primary)",
-                },
-                { label: "View Shop", icon: "👁️", color: "var(--secondary)" },
-                {
-                  label: "Download Report",
-                  icon: "📊",
-                  color: "var(--primary-dark)",
-                },
-              ].map((action, idx) => (
-                <button
-                  key={idx}
-                  style={{
-                    backgroundColor: action.color,
-                    color: "white",
-                    padding: "1.5rem",
-                    borderRadius: "8px",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "1rem",
-                    fontWeight: "700",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "0.5rem",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 8px 16px rgba(0,0,0,0.1)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
-                >
-                  <span>{action.icon}</span>
-                  {action.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </main>
-      </div>
+          <section
+            style={{
+              backgroundColor: "white",
+              padding: "1.5rem",
+              borderRadius: "8px",
+              border: "1px solid var(--primary)",
+            }}
+          >
+            <h2 style={{ color: "var(--primary-dark)", marginBottom: "0.75rem" }}>
+              My Curated Collection
+            </h2>
+            {isLoading ? (
+              <p style={{ color: "var(--text-light)" }}>Loading listings...</p>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: "1rem" }}>
+                {(profile?.products ?? []).map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/product/${item.id}`}
+                    style={{
+                      border: "1px solid var(--primary)",
+                      borderRadius: "8px",
+                      padding: "1rem",
+                      backgroundColor: "var(--accent)",
+                    }}
+                  >
+                    <p style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>{item.imageUrl || "🧵"}</p>
+                    <p style={{ fontWeight: "700", color: "var(--primary-dark)" }}>{item.name}</p>
+                    <p style={{ color: "var(--text-light)", fontSize: "0.9rem" }}>{item.description}</p>
+                    <p style={{ marginTop: "0.5rem", color: "var(--primary)", fontWeight: "700" }}>
+                      ${item.price.toFixed(2)}
+                    </p>
+                  </Link>
+                ))}
+                {!profile || profile.products.length === 0 ? (
+                  <p style={{ color: "var(--text-light)" }}>No products yet. Add your first listing above.</p>
+                ) : null}
+              </div>
+            )}
+          </section>
+
+          {statusMessage && (
+            <p style={{ color: "var(--primary-dark)", fontWeight: "600" }}>{statusMessage}</p>
+          )}
+        </div>
+      </main>
     </>
   );
 }

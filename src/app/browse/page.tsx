@@ -1,10 +1,30 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+
+type ProductItem = {
+  id: number;
+  sellerEmail: string;
+  sellerName: string;
+  sellerBusinessName?: string;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  imageUrl?: string;
+  reviews: { rating: number }[];
+};
 
 export default function BrowsePage() {
   const currentUser = useCurrentUser();
+  const [products, setProducts] = useState<ProductItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [category, setCategory] = useState("all");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -13,72 +33,44 @@ export default function BrowsePage() {
     window.location.href = "/";
   };
 
-  const products = [
-    {
-      id: 1,
-      name: "Artisan Leather Bag",
-      artist: "Sarah Crafts",
-      price: "$89",
-      category: "accessories",
-      emoji: "👜",
-    },
-    {
-      id: 2,
-      name: "Hand-Thrown Ceramic Bowl",
-      artist: "Clay Studio",
-      price: "$65",
-      category: "pottery",
-      emoji: "🏺",
-    },
-    {
-      id: 3,
-      name: "Knitted Wool Sweater",
-      artist: "Yarn & Thread",
-      price: "$120",
-      category: "textiles",
-      emoji: "🧶",
-    },
-    {
-      id: 4,
-      name: "Wooden Jewelry Box",
-      artist: "Timber & Gold",
-      price: "$75",
-      category: "home",
-      emoji: "📦",
-    },
-    {
-      id: 5,
-      name: "Silver Pendant Necklace",
-      artist: "Luna Designs",
-      price: "$120",
-      category: "jewelry",
-      emoji: "💎",
-    },
-    {
-      id: 6,
-      name: "Macramé Wall Hanging",
-      artist: "Fiber Arts Co",
-      price: "$45",
-      category: "home",
-      emoji: "🌿",
-    },
-    {
-      id: 7,
-      name: "Hand-Painted Ceramic Tiles",
-      artist: "Clay Studio",
-      price: "$55",
-      category: "pottery",
-      emoji: "🎨",
-    },
-    {
-      id: 8,
-      name: "Leather Bookmarks Set",
-      artist: "Sarah Crafts",
-      price: "$25",
-      category: "accessories",
-      emoji: "📖",
-    },
-  ];
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      setErrorMessage("");
+
+      try {
+        const query = new URLSearchParams();
+        if (category !== "all") {
+          query.set("category", category);
+        }
+        if (minPrice) {
+          query.set("minPrice", minPrice);
+        }
+        if (maxPrice) {
+          query.set("maxPrice", maxPrice);
+        }
+
+        const response = await fetch(`/api/products?${query.toString()}`);
+        const payload = (await response.json()) as { products?: ProductItem[]; message?: string };
+
+        if (!response.ok) {
+          throw new Error(payload.message || "Could not load products.");
+        }
+
+        setProducts(payload.products ?? []);
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error ? error.message : "Something went wrong.",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void fetchProducts();
+  }, [category, minPrice, maxPrice]);
+
+  const categories = useMemo(() => ["all", "jewelry", "pottery", "textiles", "home", "accessories"], []);
 
   return (
     <>
@@ -188,36 +180,64 @@ export default function BrowsePage() {
               flexWrap: "wrap",
             }}
           >
-            <button
-              style={{
-                backgroundColor: "var(--primary)",
-                color: "white",
-                padding: "0.6rem 1.2rem",
-                borderRadius: "4px",
-                border: "none",
-                cursor: "pointer",
-                fontWeight: "600",
-              }}
-            >
-              All
-            </button>
-            {["Jewelry", "Pottery", "Textiles", "Home"].map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat}
+                onClick={() => setCategory(cat)}
                 style={{
-                  backgroundColor: "white",
-                  color: "var(--primary)",
+                  backgroundColor:
+                    category === cat ? "var(--primary)" : "white",
+                  color: category === cat ? "white" : "var(--primary)",
                   padding: "0.6rem 1.2rem",
                   borderRadius: "4px",
-                  border: "2px solid var(--primary)",
+                  border:
+                    category === cat
+                      ? "1px solid var(--primary)"
+                      : "2px solid var(--primary)",
                   cursor: "pointer",
                   fontWeight: "600",
                 }}
               >
-                {cat}
+                {cat === "all" ? "All" : cat[0].toUpperCase() + cat.slice(1)}
               </button>
             ))}
+            <input
+              type="number"
+              placeholder="Min $"
+              value={minPrice}
+              onChange={(event) => setMinPrice(event.target.value)}
+              style={{
+                padding: "0.6rem 0.8rem",
+                borderRadius: "4px",
+                border: "1px solid var(--primary)",
+                width: "100px",
+              }}
+            />
+            <input
+              type="number"
+              placeholder="Max $"
+              value={maxPrice}
+              onChange={(event) => setMaxPrice(event.target.value)}
+              style={{
+                padding: "0.6rem 0.8rem",
+                borderRadius: "4px",
+                border: "1px solid var(--primary)",
+                width: "100px",
+              }}
+            />
           </div>
+
+          {errorMessage && (
+            <p style={{ marginBottom: "1rem", color: "var(--primary-dark)", fontWeight: "600" }}>
+              {errorMessage}
+            </p>
+          )}
+
+          {isLoading && (
+            <p style={{ marginBottom: "2rem", color: "var(--text-light)" }}>
+              Loading products...
+            </p>
+          )}
 
           {/* Products Grid */}
           <div
@@ -228,7 +248,8 @@ export default function BrowsePage() {
             }}
           >
             {products.map((product) => (
-              <div
+              <Link
+                href={`/product/${product.id}`}
                 key={product.id}
                 style={{
                   backgroundColor: "white",
@@ -256,7 +277,7 @@ export default function BrowsePage() {
                     fontSize: "3rem",
                   }}
                 >
-                  {product.emoji}
+                  {product.imageUrl || "🧵"}
                 </div>
                 <div style={{ padding: "1.5rem" }}>
                   <h3
@@ -274,7 +295,10 @@ export default function BrowsePage() {
                       marginBottom: "1rem",
                     }}
                   >
-                    {product.artist}
+                    by {product.sellerBusinessName || product.sellerName}
+                  </p>
+                  <p style={{ color: "var(--text-light)", fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+                    {product.description}
                   </p>
                   <div
                     style={{
@@ -290,27 +314,32 @@ export default function BrowsePage() {
                         color: "var(--primary)",
                       }}
                     >
-                      {product.price}
+                      ${product.price.toFixed(2)}
                     </span>
-                    <button
+                    <span
                       style={{
                         backgroundColor: "var(--primary)",
                         color: "white",
                         padding: "0.5rem 1rem",
                         borderRadius: "4px",
                         border: "none",
-                        cursor: "pointer",
                         fontWeight: "600",
                         fontSize: "0.9rem",
                       }}
                     >
                       View
-                    </button>
+                    </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
+
+          {!isLoading && products.length === 0 && (
+            <p style={{ marginTop: "1.5rem", color: "var(--text-light)" }}>
+              No products match your current filters.
+            </p>
+          )}
         </div>
       </section>
     </>

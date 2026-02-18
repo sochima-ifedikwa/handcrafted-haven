@@ -163,3 +163,26 @@ export const validateUserCredentials = async (
     },
   };
 };
+
+export const getUserByEmail = async (email: string) => {
+  const normalizedEmail = email.trim().toLowerCase();
+  const usersData = await loadUsersData();
+
+  const user = usersData.users.find(
+    (existingUser) => existingUser.email.toLowerCase() === normalizedEmail,
+  );
+
+  if (!user) {
+    return null;
+  }
+
+  return {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    accountType: user.accountType,
+    businessName: user.businessName,
+    bio: user.bio,
+    createdAt: user.createdAt,
+  };
+};

@@ -1,0 +1,41 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "sellerEmail": "sarah@crafts.com",
+      "sellerName": "Sarah Crafts",
+      "sellerBusinessName": "Sarah Crafts",
+      "sellerStory": "I am a leatherworker who creates durable, timeless bags inspired by family traditions.",
+      "name": "Artisan Leather Bag",
+      "description": "Handcrafted with premium leather using traditional techniques. Each piece is unique.",
+      "category": "accessories",
+      "price": 89,
+      "imageUrl": "👜",
+      "createdAt": "2026-02-18T23:21:10.979Z",
+      "reviews": [
+        {
+          "id": 1,
+          "reviewerEmail": "emma@example.com",
+          "reviewerName": "Emma",
+          "rating": 5,
+          "review": "Beautiful craftsmanship and very sturdy!",
+          "createdAt": "2026-02-18T23:21:10.981Z"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "sellerEmail": "clay@studio.com",
+      "sellerName": "Clay Studio",
+      "sellerBusinessName": "Clay Studio",
+      "sellerStory": "We hand-throw small-batch ceramics that blend modern design with timeless utility.",
+      "name": "Hand-Thrown Ceramic Bowl",
+      "description": "Food-safe ceramic bowl, perfect for soups, salads, and display.",
+      "category": "pottery",
+      "price": 65,
+      "imageUrl": "🏺",
+      "createdAt": "2026-02-18T23:21:10.981Z",
+      "reviews": []
+    }
+  ]
+}

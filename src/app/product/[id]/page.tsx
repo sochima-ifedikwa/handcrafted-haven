@@ -1,16 +1,138 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+
+type ProductReview = {
+  id: number;
+  reviewerName: string;
+  rating: number;
+  review: string;
+  createdAt: string;
+};
+
+type ProductItem = {
+  id: number;
+  sellerEmail: string;
+  sellerName: string;
+  sellerBusinessName?: string;
+  sellerStory?: string;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
+  imageUrl?: string;
+  reviews: ProductReview[];
+};
 
 export default function ProductPage() {
   const currentUser = useCurrentUser();
+  const params = useParams<{ id: string }>();
+  const productId = Number(params.id);
+  const [product, setProduct] = useState<ProductItem | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [rating, setRating] = useState(5);
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewMessage, setReviewMessage] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
     sessionStorage.removeItem("currentUser");
     notifyAuthChange();
     window.location.href = "/";
+  };
+
+  const loadProduct = async () => {
+    if (Number.isNaN(productId)) {
+      setErrorMessage("Invalid product id.");
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch(`/api/products/${productId}`);
+      const payload = (await response.json()) as {
+        product?: ProductItem;
+        message?: string;
+      };
+
+      if (!response.ok || !payload.product) {
+        throw new Error(payload.message || "Unable to load product.");
+      }
+
+      setProduct(payload.product);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unable to load product.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void loadProduct();
+  }, [params.id]);
+
+  const averageRating = useMemo(() => {
+    if (!product || product.reviews.length === 0) {
+      return 0;
+    }
+    const total = product.reviews.reduce((sum, item) => sum + item.rating, 0);
+    return total / product.reviews.length;
+  }, [product]);
+
+  const submitReview = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!currentUser) {
+      setReviewMessage("Please log in to leave a review.");
+      return;
+    }
+
+    if (!reviewText.trim()) {
+      setReviewMessage("Review text is required.");
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    setReviewMessage("");
+
+    try {
+      const response = await fetch(`/api/products/${productId}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reviewerEmail: currentUser.email,
+          rating,
+          review: reviewText.trim(),
+        }),
+      });
+
+      const payload = (await response.json()) as { message?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.message || "Could not submit review.");
+      }
+
+      setReviewText("");
+      setRating(5);
+      setReviewMessage("Thanks! Your review has been added.");
+      await loadProduct();
+    } catch (error) {
+      setReviewMessage(
+        error instanceof Error ? error.message : "Could not submit review.",
+      );
+    } finally {
+      setIsSubmittingReview(false);
+    }
   };
 
   return (
@@ -82,6 +204,14 @@ export default function ProductPage() {
         }}
       >
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          {isLoading ? (
+            <p style={{ color: "var(--text-light)" }}>Loading product...</p>
+          ) : errorMessage ? (
+            <p style={{ color: "var(--primary-dark)", fontWeight: "600" }}>
+              {errorMessage}
+            </p>
+          ) : product ? (
+            <>
           <Link
             href="/browse"
             style={{
@@ -116,7 +246,7 @@ export default function ProductPage() {
                 justifyContent: "center",
               }}
             >
-              👜
+              {product.imageUrl || "🧵"}
             </div>
 
             {/* Product Details */}
@@ -133,7 +263,7 @@ export default function ProductPage() {
                   fontWeight: "600",
                 }}
               >
-                Accessories
+                {product.category[0]?.toUpperCase() + product.category.slice(1)}
               </div>
 
               <h1
@@ -143,7 +273,7 @@ export default function ProductPage() {
                   marginBottom: "1rem",
                 }}
               >
-                Artisan Leather Bag
+                {product.name}
               </h1>
 
               <div
@@ -155,7 +285,12 @@ export default function ProductPage() {
                 }}
               >
                 <span style={{ fontSize: "1.3rem" }}>⭐⭐⭐⭐⭐</span>
-                <span style={{ color: "var(--text-light)" }}>45 reviews</span>
+                <span style={{ color: "var(--text-light)" }}>
+                  {product.reviews.length} reviews
+                  {product.reviews.length > 0
+                    ? ` • Avg ${averageRating.toFixed(1)}/5`
+                    : ""}
+                </span>
               </div>
 
               <div
@@ -166,7 +301,7 @@ export default function ProductPage() {
                   marginBottom: "2rem",
                 }}
               >
-                $89.00
+                ${product.price.toFixed(2)}
               </div>
 
               <div
@@ -191,10 +326,7 @@ export default function ProductPage() {
                     color: "var(--text-light)",
                   }}
                 >
-                  Handcrafted with premium leather, this artisan bag features
-                  traditional techniques passed down through generations. Each
-                  piece is unique with its own character and patina. Perfect for
-                  daily use or as a treasured accessory.
+                  {product.description}
                 </p>
               </div>
 
@@ -276,13 +408,25 @@ export default function ProductPage() {
                         color: "var(--primary-dark)",
                       }}
                     >
-                      Sarah Crafts
+                      {product.sellerBusinessName || product.sellerName}
                     </p>
                     <p
                       style={{ fontSize: "0.9rem", color: "var(--text-light)" }}
                     >
-                      Master leatherworker with 15 years of experience
+                      {product.sellerStory || "Passionate artisan creating handmade work."}
                     </p>
+                    <Link
+                      href={`/seller/${encodeURIComponent(product.sellerEmail)}`}
+                      style={{
+                        fontSize: "0.9rem",
+                        color: "var(--primary)",
+                        textDecoration: "underline",
+                        display: "inline-block",
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      View seller profile
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -324,8 +468,7 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Similar Products */}
-          <div style={{ marginTop: "5rem" }}>
+          <div style={{ marginTop: "4rem" }}>
             <h2
               style={{
                 fontSize: "2rem",
@@ -333,62 +476,101 @@ export default function ProductPage() {
                 marginBottom: "2rem",
               }}
             >
-              Similar Products
+              Ratings & Reviews
             </h2>
-            <div
+
+            <form
+              onSubmit={submitReview}
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-                gap: "2rem",
+                backgroundColor: "white",
+                border: "1px solid var(--primary)",
+                borderRadius: "8px",
+                padding: "1.5rem",
+                marginBottom: "1.5rem",
               }}
             >
-              {[1, 2, 3, 4].map((i) => (
+              <h3 style={{ color: "var(--primary-dark)", marginBottom: "0.75rem" }}>
+                Leave a Review
+              </h3>
+              <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.75rem" }}>
+                <label style={{ color: "var(--text-light)" }}>Rating:</label>
+                <select
+                  value={rating}
+                  onChange={(event) => setRating(Number(event.target.value))}
+                  style={{ border: "1px solid var(--primary)", borderRadius: "4px", padding: "0.3rem" }}
+                >
+                  {[5, 4, 3, 2, 1].map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <textarea
+                rows={3}
+                placeholder="Share your experience with this product"
+                value={reviewText}
+                onChange={(event) => setReviewText(event.target.value)}
+                style={{
+                  width: "100%",
+                  border: "1px solid var(--primary)",
+                  borderRadius: "4px",
+                  padding: "0.75rem",
+                  fontFamily: "inherit",
+                  marginBottom: "0.75rem",
+                }}
+              />
+              <button
+                type="submit"
+                disabled={isSubmittingReview}
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  padding: "0.6rem 1rem",
+                  fontWeight: "600",
+                  cursor: isSubmittingReview ? "not-allowed" : "pointer",
+                  opacity: isSubmittingReview ? 0.7 : 1,
+                }}
+              >
+                {isSubmittingReview ? "Submitting..." : "Submit Review"}
+              </button>
+              {reviewMessage && (
+                <p style={{ marginTop: "0.75rem", color: "var(--primary-dark)" }}>
+                  {reviewMessage}
+                </p>
+              )}
+            </form>
+
+            <div style={{ display: "grid", gap: "1rem" }}>
+              {product.reviews.map((review) => (
                 <div
-                  key={i}
+                  key={review.id}
                   style={{
                     backgroundColor: "white",
-                    borderRadius: "8px",
                     border: "1px solid var(--primary)",
-                    padding: "1.5rem",
+                    borderRadius: "8px",
+                    padding: "1rem",
                   }}
                 >
-                  <div
-                    style={{
-                      backgroundColor: "var(--accent)",
-                      padding: "2rem",
-                      textAlign: "center",
-                      fontSize: "2.5rem",
-                      marginBottom: "1rem",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    👜
-                  </div>
-                  <p style={{ fontWeight: "600", marginBottom: "0.5rem" }}>
-                    Similar Item {i}
+                  <p style={{ fontWeight: "700", color: "var(--primary-dark)" }}>
+                    {review.reviewerName} • {"⭐".repeat(review.rating)}
                   </p>
-                  <p
-                    style={{
-                      color: "var(--text-light)",
-                      fontSize: "0.9rem",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    by Sarah Crafts
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "1.2rem",
-                      color: "var(--primary)",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    $69 - $99
+                  <p style={{ color: "var(--text-light)", marginTop: "0.4rem" }}>
+                    {review.review}
                   </p>
                 </div>
               ))}
+              {product.reviews.length === 0 && (
+                <p style={{ color: "var(--text-light)" }}>
+                  No reviews yet. Be the first to leave one.
+                </p>
+              )}
             </div>
           </div>
+          </>
+          ) : null}
         </div>
       </section>
     </>
