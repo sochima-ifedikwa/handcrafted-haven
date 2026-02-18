@@ -96,7 +96,10 @@ export const createUser = async (input: CreateUserInput) => {
   );
 
   if (existingUser) {
-    return { ok: false as const, error: "An account with this email already exists." };
+    return {
+      ok: false as const,
+      error: "An account with this email already exists.",
+    };
   }
 
   const newUser: StoredUser = {
@@ -127,7 +130,10 @@ export const createUser = async (input: CreateUserInput) => {
   };
 };
 
-export const validateUserCredentials = async (email: string, password: string) => {
+export const validateUserCredentials = async (
+  email: string,
+  password: string,
+) => {
   const normalizedEmail = email.trim().toLowerCase();
   const usersData = await loadUsersData();
 

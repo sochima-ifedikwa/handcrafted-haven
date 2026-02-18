@@ -82,7 +82,10 @@ export async function POST(request: Request) {
   });
 
   if (!creationResult.ok) {
-    return NextResponse.json({ message: creationResult.error }, { status: 409 });
+    return NextResponse.json(
+      { message: creationResult.error },
+      { status: 409 },
+    );
   }
 
   return NextResponse.json(

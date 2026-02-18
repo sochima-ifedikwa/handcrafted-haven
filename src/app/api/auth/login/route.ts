@@ -33,7 +33,10 @@ export async function POST(request: Request) {
   }
 
   if (!password) {
-    return NextResponse.json({ message: "Password is required." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Password is required." },
+      { status: 400 },
+    );
   }
 
   const result = await validateUserCredentials(email, password);

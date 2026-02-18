@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { notifyAuthChange } from "@/lib/use-current-user";
 
 type LoginFormData = {
   email: string;
@@ -25,8 +26,7 @@ export default function LoginPage() {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, value } = event.target;
-    const nextValue =
-      type === "checkbox" ? event.target.checked : value;
+    const nextValue = type === "checkbox" ? event.target.checked : value;
 
     setFormData((previous) => ({
       ...previous,
@@ -93,6 +93,7 @@ export default function LoginPage() {
       if (payload.user) {
         const storage = formData.rememberMe ? localStorage : sessionStorage;
         storage.setItem("currentUser", JSON.stringify(payload.user));
+        notifyAuthChange();
       }
 
       setSuccessMessage(payload.message || "Login successful! Redirecting...");

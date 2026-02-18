@@ -1,6 +1,17 @@
 "use client";
 
+import { notifyAuthChange, useCurrentUser } from "@/lib/use-current-user";
+
 export default function Home() {
+  const currentUser = useCurrentUser();
+
+  const handleLogout = () => {
+    localStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUser");
+    notifyAuthChange();
+    window.location.href = "/";
+  };
+
   return (
     <>
       {/* Header/Navigation */}
@@ -37,21 +48,45 @@ export default function Home() {
             <a href="#featured">Featured</a>
             <a href="#about">About</a>
             <a href="/browse">Browse</a>
-            <a href="/login" style={{ color: "var(--text-light)" }}>
-              Login
-            </a>
-            <a
-              href="/register"
-              style={{
-                backgroundColor: "var(--primary)",
-                color: "white",
-                padding: "0.5rem 1.25rem",
-                borderRadius: "4px",
-                fontWeight: "600",
-              }}
-            >
-              Join
-            </a>
+            {currentUser ? (
+              <a href="/welcome" style={{ color: "var(--text-light)" }}>
+                Welcome, {currentUser.firstName}
+              </a>
+            ) : (
+              <a href="/login" style={{ color: "var(--text-light)" }}>
+                Login
+              </a>
+            )}
+            {currentUser ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "white",
+                  padding: "0.5rem 1.25rem",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                Logout
+              </button>
+            ) : (
+              <a
+                href="/register"
+                style={{
+                  backgroundColor: "var(--primary)",
+                  color: "white",
+                  padding: "0.5rem 1.25rem",
+                  borderRadius: "4px",
+                  fontWeight: "600",
+                }}
+              >
+                Join
+              </a>
+            )}
           </div>
         </nav>
       </header>
