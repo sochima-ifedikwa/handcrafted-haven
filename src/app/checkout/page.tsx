@@ -122,7 +122,10 @@ export default function CheckoutPage() {
               >
                 Your order has been placed successfully.
               </p>
-              <Link href="/browse" style={{ color: "var(--primary)", fontWeight: "600" }}>
+              <Link
+                href="/browse"
+                style={{ color: "var(--primary)", fontWeight: "600" }}
+              >
                 Continue shopping
               </Link>
             </div>
@@ -135,10 +138,15 @@ export default function CheckoutPage() {
                 padding: "1.5rem",
               }}
             >
-              <p style={{ color: "var(--text-light)", marginBottom: "0.75rem" }}>
+              <p
+                style={{ color: "var(--text-light)", marginBottom: "0.75rem" }}
+              >
                 Your cart is empty. Add items before checkout.
               </p>
-              <Link href="/browse" style={{ color: "var(--primary)", fontWeight: "600" }}>
+              <Link
+                href="/browse"
+                style={{ color: "var(--primary)", fontWeight: "600" }}
+              >
                 Browse products
               </Link>
             </div>
@@ -151,10 +159,18 @@ export default function CheckoutPage() {
                 padding: "1.5rem",
               }}
             >
-              <h2 style={{ color: "var(--primary-dark)", marginBottom: "1rem" }}>
+              <h2
+                style={{ color: "var(--primary-dark)", marginBottom: "1rem" }}
+              >
                 Order Summary
               </h2>
-              <div style={{ display: "grid", gap: "0.75rem", marginBottom: "1rem" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gap: "0.75rem",
+                  marginBottom: "1rem",
+                }}
+              >
                 {cartItems.map((item) => (
                   <div
                     key={item.productId}
@@ -168,14 +184,21 @@ export default function CheckoutPage() {
                     <span style={{ color: "var(--text-light)" }}>
                       {item.name} × {item.quantity}
                     </span>
-                    <span style={{ color: "var(--primary-dark)", fontWeight: "600" }}>
+                    <span
+                      style={{
+                        color: "var(--primary-dark)",
+                        fontWeight: "600",
+                      }}
+                    >
                       ${(item.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <p style={{ color: "var(--text-light)", marginBottom: "0.25rem" }}>
+              <p
+                style={{ color: "var(--text-light)", marginBottom: "0.25rem" }}
+              >
                 Items: {totalItems}
               </p>
               <p
@@ -205,7 +228,10 @@ export default function CheckoutPage() {
               >
                 Place Order
               </button>
-              <Link href="/cart" style={{ color: "var(--primary)", fontWeight: "600" }}>
+              <Link
+                href="/cart"
+                style={{ color: "var(--primary)", fontWeight: "600" }}
+              >
                 Back to Cart
               </Link>
             </div>
