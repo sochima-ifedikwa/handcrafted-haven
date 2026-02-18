@@ -5,6 +5,7 @@ export default function Home() {
     <>
       {/* Header/Navigation */}
       <header
+        id="top"
         style={{
           backgroundColor: "var(--accent)",
           borderBottom: "1px solid var(--primary)",
@@ -557,6 +558,7 @@ export default function Home() {
 
       {/* Newsletter */}
       <section
+        id="contact"
         style={{
           padding: "3rem 2rem",
           backgroundColor: "var(--primary-dark)",
@@ -702,13 +704,13 @@ export default function Home() {
               </h4>
               <ul style={{ listStyle: "none" }}>
                 <li>
-                  <a href="#">Contact Us</a>
+                  <a href="#contact">Contact Us</a>
                 </li>
                 <li>
-                  <a href="#">Privacy Policy</a>
+                  <a href="#about">Privacy Policy</a>
                 </li>
                 <li>
-                  <a href="#">Terms of Service</a>
+                  <a href="#top">Terms of Service</a>
                 </li>
               </ul>
             </div>

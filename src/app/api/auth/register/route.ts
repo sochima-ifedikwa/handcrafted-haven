@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createUser } from "@/lib/auth-store";
 
 type AccountType = "buyer" | "artisan";
 
@@ -12,7 +13,7 @@ type RegisterRequestBody = {
   bio?: string;
 };
 
-const registeredEmails = new Set<string>();
+export const runtime = "nodejs";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -70,24 +71,24 @@ export async function POST(request: Request) {
     );
   }
 
-  if (registeredEmails.has(email)) {
-    return NextResponse.json(
-      { message: "An account with this email already exists." },
-      { status: 409 },
-    );
-  }
+  const creationResult = await createUser({
+    firstName,
+    lastName,
+    email,
+    password,
+    accountType,
+    businessName: accountType === "artisan" ? businessName : undefined,
+    bio: body.bio,
+  });
 
-  registeredEmails.add(email);
+  if (!creationResult.ok) {
+    return NextResponse.json({ message: creationResult.error }, { status: 409 });
+  }
 
   return NextResponse.json(
     {
       message: "Account created successfully! Redirecting to sign in...",
-      user: {
-        firstName,
-        lastName,
-        email,
-        accountType,
-      },
+      user: creationResult.user,
     },
     { status: 201 },
   );

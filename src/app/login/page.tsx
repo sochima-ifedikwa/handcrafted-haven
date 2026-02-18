@@ -1,8 +1,117 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+type LoginFormData = {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+};
+
+const initialFormData: LoginFormData = {
+  email: "",
+  password: "",
+  rememberMe: false,
+};
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState<LoginFormData>(initialFormData);
+  const [formError, setFormError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, type, value } = event.target;
+    const nextValue =
+      type === "checkbox" ? event.target.checked : value;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: nextValue,
+    }));
+
+    if (formError) {
+      setFormError("");
+    }
+  };
+
+  const validateForm = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email.trim().toLowerCase())) {
+      return "Enter a valid email address.";
+    }
+
+    if (!formData.password) {
+      return "Password is required.";
+    }
+
+    return "";
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const validationError = validateForm();
+    if (validationError) {
+      setFormError(validationError);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormError("");
+    setSuccessMessage("");
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email.trim().toLowerCase(),
+          password: formData.password,
+        }),
+      });
+
+      const payload = (await response.json()) as {
+        message?: string;
+        user?: {
+          firstName: string;
+          lastName: string;
+          email: string;
+          accountType: "buyer" | "artisan";
+        };
+      };
+
+      if (!response.ok) {
+        throw new Error(payload.message || "Unable to sign in right now.");
+      }
+
+      if (payload.user) {
+        const storage = formData.rememberMe ? localStorage : sessionStorage;
+        storage.setItem("currentUser", JSON.stringify(payload.user));
+      }
+
+      setSuccessMessage(payload.message || "Login successful! Redirecting...");
+      setFormData(initialFormData);
+
+      setTimeout(() => {
+        router.push("/welcome");
+      }, 1000);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again.";
+      setFormError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       {/* Header */}
@@ -34,7 +143,7 @@ export default function LoginPage() {
           </Link>
           <div style={{ display: "flex", gap: "1.5rem" }}>
             <Link href="/">Home</Link>
-            <a href="/register">Create Account</a>
+            <Link href="/register">Create Account</Link>
           </div>
         </nav>
       </header>
@@ -82,7 +191,7 @@ export default function LoginPage() {
           </p>
 
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -101,8 +210,11 @@ export default function LoginPage() {
                 Email Address
               </label>
               <input
+                name="email"
                 type="email"
                 placeholder="your@email.com"
+                value={formData.email}
+                onChange={handleInputChange}
                 style={{
                   width: "100%",
                   padding: "0.75rem 1rem",
@@ -126,8 +238,11 @@ export default function LoginPage() {
                 Password
               </label>
               <input
+                name="password"
                 type="password"
                 placeholder="••••••••"
+                value={formData.password}
+                onChange={handleInputChange}
                 style={{
                   width: "100%",
                   padding: "0.75rem 1rem",
@@ -147,11 +262,44 @@ export default function LoginPage() {
                 cursor: "pointer",
               }}
             >
-              <input type="checkbox" style={{ cursor: "pointer" }} />
+              <input
+                name="rememberMe"
+                type="checkbox"
+                checked={formData.rememberMe}
+                onChange={handleInputChange}
+                style={{ cursor: "pointer" }}
+              />
               <span style={{ color: "var(--text-light)" }}>Remember me</span>
             </label>
 
+            {formError && (
+              <p
+                role="alert"
+                style={{
+                  color: "var(--primary-dark)",
+                  fontSize: "0.95rem",
+                  fontWeight: "600",
+                }}
+              >
+                {formError}
+              </p>
+            )}
+
+            {successMessage && (
+              <p
+                style={{
+                  color: "var(--primary)",
+                  fontSize: "0.95rem",
+                  fontWeight: "600",
+                }}
+              >
+                {successMessage}
+              </p>
+            )}
+
             <button
+              type="submit"
+              disabled={isSubmitting}
               style={{
                 backgroundColor: "var(--primary)",
                 color: "white",
@@ -160,17 +308,20 @@ export default function LoginPage() {
                 border: "none",
                 fontSize: "1rem",
                 fontWeight: "700",
-                cursor: "pointer",
+                cursor: isSubmitting ? "not-allowed" : "pointer",
+                opacity: isSubmitting ? 0.7 : 1,
                 transition: "all 0.3s ease",
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--primary-dark)";
+                if (!isSubmitting) {
+                  e.currentTarget.style.backgroundColor = "var(--primary-dark)";
+                }
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.backgroundColor = "var(--primary)";
               }}
             >
-              Sign In
+              {isSubmitting ? "Signing In..." : "Sign In"}
             </button>
 
             <div style={{ textAlign: "center" }}>
@@ -197,7 +348,7 @@ export default function LoginPage() {
 
           <p style={{ textAlign: "center", color: "var(--text-light)" }}>
             Don&apos;t have an account?{" "}
-            <a
+            <Link
               href="/register"
               style={{
                 color: "var(--primary)",
@@ -206,7 +357,7 @@ export default function LoginPage() {
               }}
             >
               Create one here
-            </a>
+            </Link>
           </p>
         </div>
       </section>
