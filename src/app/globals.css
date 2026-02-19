@@ -107,10 +107,32 @@ input {
 }
 
 @media (max-width: 900px) {
+  .responsive-header {
+    padding: 0.9rem 1rem !important;
+  }
+
+  .responsive-brand {
+    font-size: 1.2rem !important;
+  }
+
   .responsive-top-nav {
     flex-wrap: wrap !important;
     justify-content: flex-end !important;
     gap: 0.75rem !important;
+  }
+
+  .responsive-nav-links {
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    gap: 0.75rem !important;
+  }
+
+  .responsive-section {
+    padding: 2rem 1rem !important;
+  }
+
+  .responsive-card {
+    padding: 1.25rem !important;
   }
 
   .responsive-two-col {
@@ -143,5 +165,57 @@ input {
   .responsive-hero-title {
     font-size: 2.2rem !important;
     line-height: 1.2 !important;
+  }
+
+  .responsive-page-title {
+    font-size: 2rem !important;
+  }
+
+  .responsive-inline-cta {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  .responsive-product-image {
+    padding: 1.5rem !important;
+    font-size: 5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-header {
+    padding: 0.75rem !important;
+  }
+
+  .responsive-brand {
+    font-size: 1.05rem !important;
+  }
+
+  .responsive-top-nav,
+  .responsive-nav-links {
+    gap: 0.5rem !important;
+    font-size: 0.92rem !important;
+  }
+
+  .responsive-section {
+    padding: 1.25rem 0.75rem !important;
+  }
+
+  .responsive-card {
+    padding: 1rem !important;
+  }
+
+  .responsive-hero-title {
+    font-size: 1.75rem !important;
+  }
+
+  .responsive-page-title {
+    font-size: 1.5rem !important;
+  }
+
+  .responsive-product-image {
+    font-size: 3.5rem !important;
+    padding: 1rem !important;
   }
 }

@@ -26,6 +26,7 @@ export default function Home() {
       {/* Header/Navigation */}
       <header
         id="top"
+        className="responsive-header"
         style={{
           backgroundColor: "var(--accent)",
           borderBottom: "1px solid var(--primary)",
@@ -45,6 +46,7 @@ export default function Home() {
           }}
         >
           <div
+            className="responsive-brand"
             style={{
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -124,6 +126,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <section
+        className="responsive-section"
         style={{
           backgroundColor: "var(--background)",
           padding: "5rem 2rem",
@@ -156,6 +159,7 @@ export default function Home() {
             handmade treasures that bring warmth and character to your life.
           </p>
           <div
+            className="responsive-inline-cta"
             style={{ display: "flex", gap: "1.5rem", justifyContent: "center" }}
           >
             <a

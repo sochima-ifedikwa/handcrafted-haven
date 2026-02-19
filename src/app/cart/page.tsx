@@ -34,6 +34,7 @@ export default function CartPage() {
   return (
     <>
       <header
+        className="responsive-header"
         style={{
           backgroundColor: "var(--accent)",
           borderBottom: "1px solid var(--primary)",
@@ -54,6 +55,7 @@ export default function CartPage() {
         >
           <Link
             href="/"
+            className="responsive-brand"
             style={{
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -62,7 +64,10 @@ export default function CartPage() {
           >
             🎨 Handcrafted Haven
           </Link>
-          <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+          <div
+            className="responsive-nav-links"
+            style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}
+          >
             <Link href="/browse">Browse</Link>
             <Link href="/cart">Cart ({totalItems})</Link>
             {currentUser ? (
@@ -92,6 +97,7 @@ export default function CartPage() {
       </header>
 
       <section
+        className="responsive-section"
         style={{
           minHeight: "calc(100vh - 68px)",
           backgroundColor: "var(--background)",
@@ -108,6 +114,7 @@ export default function CartPage() {
 
           {cartItems.length === 0 ? (
             <div
+              className="responsive-card"
               style={{
                 backgroundColor: "white",
                 border: "1px solid var(--primary)",
@@ -141,7 +148,7 @@ export default function CartPage() {
                 {cartItems.map((item) => (
                   <div
                     key={item.productId}
-                    className="responsive-cart-item"
+                    className="responsive-cart-item responsive-card"
                     style={{
                       backgroundColor: "white",
                       border: "1px solid var(--primary)",
@@ -216,6 +223,7 @@ export default function CartPage() {
               </div>
 
               <aside
+                className="responsive-card"
                 style={{
                   backgroundColor: "white",
                   border: "1px solid var(--primary)",

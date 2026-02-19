@@ -166,6 +166,7 @@ export default function RegisterPage() {
     <>
       {/* Header */}
       <header
+        className="responsive-header"
         style={{
           backgroundColor: "var(--accent)",
           borderBottom: "1px solid var(--primary)",
@@ -183,6 +184,7 @@ export default function RegisterPage() {
         >
           <Link
             href="/"
+            className="responsive-brand"
             style={{
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -191,7 +193,10 @@ export default function RegisterPage() {
           >
             🎨 Handcrafted Haven
           </Link>
-          <div style={{ display: "flex", gap: "1.5rem" }}>
+          <div
+            className="responsive-nav-links"
+            style={{ display: "flex", gap: "1.5rem" }}
+          >
             <Link href="/">Home</Link>
             <Link href="/cart">Cart ({totalCartItems})</Link>
             {currentUser ? (
@@ -221,6 +226,7 @@ export default function RegisterPage() {
 
       {/* Register Section */}
       <section
+        className="responsive-section"
         style={{
           minHeight: "calc(100vh - 60px)",
           display: "flex",
@@ -231,6 +237,7 @@ export default function RegisterPage() {
         }}
       >
         <div
+          className="responsive-card"
           style={{
             width: "100%",
             maxWidth: "500px",
@@ -242,6 +249,7 @@ export default function RegisterPage() {
           }}
         >
           <h1
+            className="responsive-page-title"
             style={{
               fontSize: "2rem",
               marginBottom: "0.5rem",
@@ -281,7 +289,10 @@ export default function RegisterPage() {
               >
                 I am a...
               </label>
-              <div style={{ display: "flex", gap: "1rem" }}>
+              <div
+                className="responsive-inline-cta"
+                style={{ display: "flex", gap: "1rem" }}
+              >
                 <label
                   style={{
                     flex: 1,

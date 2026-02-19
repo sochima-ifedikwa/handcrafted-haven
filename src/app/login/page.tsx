@@ -132,6 +132,7 @@ export default function LoginPage() {
     <>
       {/* Header */}
       <header
+        className="responsive-header"
         style={{
           backgroundColor: "var(--accent)",
           borderBottom: "1px solid var(--primary)",
@@ -149,6 +150,7 @@ export default function LoginPage() {
         >
           <Link
             href="/"
+            className="responsive-brand"
             style={{
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -157,7 +159,10 @@ export default function LoginPage() {
           >
             🎨 Handcrafted Haven
           </Link>
-          <div style={{ display: "flex", gap: "1.5rem" }}>
+          <div
+            className="responsive-nav-links"
+            style={{ display: "flex", gap: "1.5rem" }}
+          >
             <Link href="/">Home</Link>
             <Link href="/cart">Cart ({totalCartItems})</Link>
             {currentUser ? (
@@ -187,6 +192,7 @@ export default function LoginPage() {
 
       {/* Login Section */}
       <section
+        className="responsive-section"
         style={{
           minHeight: "calc(100vh - 60px)",
           display: "flex",
@@ -197,6 +203,7 @@ export default function LoginPage() {
         }}
       >
         <div
+          className="responsive-card"
           style={{
             width: "100%",
             maxWidth: "450px",
@@ -208,6 +215,7 @@ export default function LoginPage() {
           }}
         >
           <h1
+            className="responsive-page-title"
             style={{
               fontSize: "2rem",
               marginBottom: "0.5rem",

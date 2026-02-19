@@ -107,6 +107,7 @@ export default function BrowsePage() {
     <>
       {/* Header */}
       <header
+        className="responsive-header"
         style={{
           backgroundColor: "var(--accent)",
           borderBottom: "1px solid var(--primary)",
@@ -127,6 +128,7 @@ export default function BrowsePage() {
         >
           <Link
             href="/"
+            className="responsive-brand"
             style={{
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -135,7 +137,10 @@ export default function BrowsePage() {
           >
             🎨 Handcrafted Haven
           </Link>
-          <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+          <div
+            className="responsive-nav-links"
+            style={{ display: "flex", gap: "2rem", alignItems: "center" }}
+          >
             <Link href="/">Home</Link>
             <Link href="/cart">Cart ({totalCartItems})</Link>
             {currentUser ? (
@@ -177,6 +182,7 @@ export default function BrowsePage() {
 
       {/* Browse Section */}
       <section
+        className="responsive-section"
         style={{
           padding: "3rem 2rem",
           backgroundColor: "var(--background)",
@@ -185,6 +191,7 @@ export default function BrowsePage() {
       >
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <h1
+            className="responsive-page-title"
             style={{
               fontSize: "2.5rem",
               marginBottom: "0.5rem",

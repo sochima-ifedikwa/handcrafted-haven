@@ -166,6 +166,7 @@ export default function ProductPage() {
     <>
       {/* Header */}
       <header
+        className="responsive-header"
         style={{
           backgroundColor: "var(--accent)",
           borderBottom: "1px solid var(--primary)",
@@ -186,6 +187,7 @@ export default function ProductPage() {
         >
           <Link
             href="/"
+            className="responsive-brand"
             style={{
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -194,7 +196,10 @@ export default function ProductPage() {
           >
             🎨 Handcrafted Haven
           </Link>
-          <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+          <div
+            className="responsive-nav-links"
+            style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}
+          >
             <Link href="/browse">Browse</Link>
             <Link href="/cart">Cart ({totalCartItems})</Link>
             {currentUser ? (
@@ -225,6 +230,7 @@ export default function ProductPage() {
 
       {/* Product Detail */}
       <section
+        className="responsive-section"
         style={{
           padding: "3rem 2rem",
           backgroundColor: "var(--background)",
@@ -263,6 +269,7 @@ export default function ProductPage() {
               >
                 {/* Product Image */}
                 <div
+                  className="responsive-product-image"
                   style={{
                     backgroundColor: "var(--accent)",
                     borderRadius: "8px",
@@ -297,6 +304,7 @@ export default function ProductPage() {
                   </div>
 
                   <h1
+                    className="responsive-page-title"
                     style={{
                       fontSize: "2.5rem",
                       color: "var(--primary-dark)",
