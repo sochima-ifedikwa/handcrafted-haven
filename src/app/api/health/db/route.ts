@@ -19,6 +19,7 @@ export async function GET() {
 
   try {
     await prisma.$queryRaw`SELECT 1`;
+    await prisma.user.count();
 
     return NextResponse.json(
       {
@@ -29,7 +30,27 @@ export async function GET() {
       },
       { status: 200 },
     );
-  } catch {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    const isSchemaIssue =
+      message.includes("does not exist") ||
+      message.includes("relation") ||
+      message.includes("table");
+
+    if (isSchemaIssue) {
+      return NextResponse.json(
+        {
+          ok: false,
+          status: "schema_missing",
+          message:
+            "Database is reachable, but schema is not applied. Run Prisma migrate deploy.",
+          latencyMs: Date.now() - startedAt,
+          timestamp: new Date().toISOString(),
+        },
+        { status: 500 },
+      );
+    }
+
     return NextResponse.json(
       {
         ok: false,

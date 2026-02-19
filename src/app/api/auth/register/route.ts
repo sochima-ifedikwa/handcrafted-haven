@@ -96,7 +96,23 @@ export async function POST(request: Request) {
       },
       { status: 201 },
     );
-  } catch {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    const isSchemaIssue =
+      message.includes("does not exist") ||
+      message.includes("relation") ||
+      message.includes("table");
+
+    if (isSchemaIssue) {
+      return NextResponse.json(
+        {
+          message:
+            "Database schema is not ready. Run Prisma migrate deploy in production.",
+        },
+        { status: 500 },
+      );
+    }
+
     return NextResponse.json(
       {
         message:
