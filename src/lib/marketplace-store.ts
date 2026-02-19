@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { prisma } from "@/lib/prisma";
 
 export type ProductReview = {
   id: number;
@@ -23,6 +24,16 @@ export type ProductItem = {
   imageUrl?: string;
   createdAt: string;
   reviews: ProductReview[];
+};
+
+type DbReview = {
+  id: number;
+  productId: number;
+  reviewerEmail: string;
+  reviewerName: string;
+  rating: number;
+  review: string;
+  createdAt: Date;
 };
 
 type MarketplaceData = {
@@ -131,13 +142,32 @@ const saveData = async (data: MarketplaceData) => {
   await writeFile(marketplaceFilePath, JSON.stringify(data, null, 2), "utf-8");
 };
 
+const mapDbReview = (review: DbReview): ProductReview => ({
+  id: review.id,
+  reviewerEmail: review.reviewerEmail,
+  reviewerName: review.reviewerName,
+  rating: review.rating,
+  review: review.review,
+  createdAt: review.createdAt.toISOString(),
+});
+
+const mergeReviews = (
+  fileReviews: ProductReview[],
+  dbReviews: ProductReview[],
+) =>
+  [...fileReviews, ...dbReviews].sort((a, b) => {
+    const left = new Date(a.createdAt).getTime();
+    const right = new Date(b.createdAt).getTime();
+    return right - left;
+  });
+
 export const listProducts = async (filters?: {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
 }) => {
   const data = await loadData();
-  return data.products.filter((product) => {
+  const filteredProducts = data.products.filter((product) => {
     const categoryOk = filters?.category
       ? product.category.toLowerCase() === filters.category.toLowerCase()
       : true;
@@ -151,11 +181,51 @@ export const listProducts = async (filters?: {
         : true;
     return categoryOk && minOk && maxOk;
   });
+
+  const productIds = filteredProducts.map((product) => product.id);
+  if (productIds.length === 0) {
+    return filteredProducts;
+  }
+
+  const dbReviews = await prisma.review.findMany({
+    where: { productId: { in: productIds } },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const reviewsByProductId = new Map<number, ProductReview[]>();
+  for (const review of dbReviews) {
+    const mapped = mapDbReview(review);
+    const existing = reviewsByProductId.get(review.productId) ?? [];
+    existing.push(mapped);
+    reviewsByProductId.set(review.productId, existing);
+  }
+
+  return filteredProducts.map((product) => ({
+    ...product,
+    reviews: mergeReviews(
+      product.reviews,
+      reviewsByProductId.get(product.id) ?? [],
+    ),
+  }));
 };
 
 export const getProductById = async (id: number) => {
   const data = await loadData();
-  return data.products.find((product) => product.id === id) ?? null;
+  const product = data.products.find((item) => item.id === id);
+
+  if (!product) {
+    return null;
+  }
+
+  const dbReviews = await prisma.review.findMany({
+    where: { productId: id },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return {
+    ...product,
+    reviews: mergeReviews(product.reviews, dbReviews.map(mapDbReview)),
+  };
 };
 
 export const createProduct = async (input: CreateProductInput) => {
@@ -189,31 +259,23 @@ export const addReviewToProduct = async (
   productId: number,
   input: AddReviewInput,
 ) => {
-  const data = await loadData();
-  const product = data.products.find((item) => item.id === productId);
+  const product = await getProductById(productId);
 
   if (!product) {
     return null;
   }
 
-  const nextReviewId =
-    product.reviews.length > 0
-      ? Math.max(...product.reviews.map((review) => review.id)) + 1
-      : 1;
+  const created = await prisma.review.create({
+    data: {
+      productId,
+      reviewerEmail: input.reviewerEmail.trim().toLowerCase(),
+      reviewerName: input.reviewerName.trim(),
+      rating: input.rating,
+      review: input.review.trim(),
+    },
+  });
 
-  const review: ProductReview = {
-    id: nextReviewId,
-    reviewerEmail: input.reviewerEmail.trim().toLowerCase(),
-    reviewerName: input.reviewerName.trim(),
-    rating: input.rating,
-    review: input.review.trim(),
-    createdAt: new Date().toISOString(),
-  };
-
-  product.reviews.push(review);
-  await saveData(data);
-
-  return review;
+  return mapDbReview(created);
 };
 
 export const listProductsBySeller = async (sellerEmail: string) => {

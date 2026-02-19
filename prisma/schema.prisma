@@ -27,3 +27,15 @@ model User {
 
   @@index([createdAt])
 }
+
+model Review {
+  id            Int      @id @default(autoincrement())
+  productId     Int
+  reviewerEmail String
+  reviewerName  String
+  rating        Int
+  review        String
+  createdAt     DateTime @default(now())
+
+  @@index([productId, createdAt])
+}

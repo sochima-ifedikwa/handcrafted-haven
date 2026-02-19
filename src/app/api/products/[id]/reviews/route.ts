@@ -54,27 +54,37 @@ export async function POST(
     );
   }
 
-  const reviewer = await getUserByEmail(reviewerEmail);
-  if (!reviewer) {
+  try {
+    const reviewer = await getUserByEmail(reviewerEmail);
+    if (!reviewer) {
+      return NextResponse.json(
+        { message: "Only registered users can leave reviews." },
+        { status: 403 },
+      );
+    }
+
+    const review = await addReviewToProduct(productId, {
+      reviewerEmail,
+      reviewerName: `${reviewer.firstName} ${reviewer.lastName}`,
+      rating,
+      review: reviewText,
+    });
+
+    if (!review) {
+      return NextResponse.json(
+        { message: "Product not found." },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ review }, { status: 201 });
+  } catch {
     return NextResponse.json(
-      { message: "Only registered users can leave reviews." },
-      { status: 403 },
+      {
+        message:
+          "Unable to submit review right now. Please try again in a moment.",
+      },
+      { status: 500 },
     );
   }
-
-  const review = await addReviewToProduct(productId, {
-    reviewerEmail,
-    reviewerName: `${reviewer.firstName} ${reviewer.lastName}`,
-    rating,
-    review: reviewText,
-  });
-
-  if (!review) {
-    return NextResponse.json(
-      { message: "Product not found." },
-      { status: 404 },
-    );
-  }
-
-  return NextResponse.json({ review }, { status: 201 });
 }

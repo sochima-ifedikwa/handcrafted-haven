@@ -133,6 +133,16 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  reviewerEmail: 'reviewerEmail',
+  reviewerName: 'reviewerName',
+  rating: 'rating',
+  review: 'review',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -153,7 +163,8 @@ exports.AccountType = exports.$Enums.AccountType = {
 };
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Review: 'Review'
 };
 
 /**
