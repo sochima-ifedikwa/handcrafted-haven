@@ -1,5 +1,5 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
-import { AccountType } from "@prisma/client";
+import { AccountType } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 
 type LocalAccountType = "buyer" | "artisan";
@@ -108,7 +108,9 @@ export const validateUserCredentials = async (
   password: string,
 ) => {
   const normalizedEmail = email.trim().toLowerCase();
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  });
 
   if (!user) {
     return { ok: false as const, error: "Invalid email or password." };
@@ -135,7 +137,9 @@ export const validateUserCredentials = async (
 
 export const getUserByEmail = async (email: string) => {
   const normalizedEmail = email.trim().toLowerCase();
-  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  });
 
   if (!user) {
     return null;

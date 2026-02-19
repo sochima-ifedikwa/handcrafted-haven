@@ -1,15 +1,19 @@
 ## Technologies Used
+
 ### Front-End
+
 - HTML
 - CSS
 - JavaScript
 - **Next.js**
 
 ### Back-End
+
 - **Node.js**
 - Database (to be determined)
 
 ### Project Management & Deployment
+
 - Git & GitHub
 - GitHub Projects (Kanban Board)
 - **Vercel** (Deployment)
@@ -17,6 +21,7 @@
 ---
 
 ## Design Guidelines
+
 - Consistent branding (colors, typography, layout)
 - Clear and intuitive navigation
 - Responsive and accessible UI
@@ -25,6 +30,7 @@
 ---
 
 ## Project Management
+
 - All tasks and user stories are managed using **GitHub Projects**
 - The team follows collaborative Git workflows and best practices
 - User stories and work items are continuously refined throughout the project
@@ -32,14 +38,15 @@
 ---
 
 ## Team Members
+
 - Mafo Kisanga Glody
 - Joy Oyaleke
 - Sochima Ifedikwa
 
-
 ---
 
 ## Deployment
+
 The application will be deployed using **Vercel** and made publicly accessible.
 
 ## Database Setup (Prisma + PostgreSQL on Vercel)
@@ -52,13 +59,14 @@ This project now uses **Prisma** for user authentication storage.
 pnpm install
 ```
 
-2. Set your connection string in `.env`:
+2. Set your environment variables in `.env`:
 
 ```bash
-DATABASE_URL="postgresql://..."
+PRISMA_DATABASE_URL="prisma+postgres://..."
+POSTGRES_URL="postgres://..."
 ```
 
-3. Create/update your database schema:
+3. Create/update your database schema (uses `POSTGRES_URL` as `directUrl`):
 
 ```bash
 pnpm prisma:migrate --name init_users
@@ -74,8 +82,8 @@ pnpm prisma:generate
 
 1. In Vercel, open your project and go to **Storage**.
 2. Create/connect a **Postgres** database.
-3. Copy `DATABASE_URL` from Vercel env variables.
-4. Add that variable to Vercel environments (`Development`, `Preview`, `Production`).
+3. Copy your Prisma runtime URL into `PRISMA_DATABASE_URL` and your direct DB URL into `POSTGRES_URL`.
+4. Add both variables to Vercel environments (`Development`, `Preview`, `Production`).
 5. Deploy your app.
 
 ### Auth Storage Notes
@@ -87,7 +95,9 @@ pnpm prisma:generate
 ---
 
 ## Course Context
+
 This project is developed as part of a group assignment to:
+
 - Strengthen full-stack web development skills
 - Build professionalism and teamwork
 - Teach and learn collaboratively following the BYU-Idaho learning model
@@ -95,6 +105,7 @@ This project is developed as part of a group assignment to:
 ---
 
 ## License
+
 This project is developed for educational purposes.
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
