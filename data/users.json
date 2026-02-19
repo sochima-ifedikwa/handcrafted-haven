@@ -7,6 +7,14 @@
       "accountType": "buyer",
       "passwordHash": "522184f11482812176539c1705a27cc5:4d5156a5ed287b5cf74c7e46b30116b6f0033d4ee5e30fd95658be33738ba16cc293b68eb7caf86a38b923a89c074f3868d0a5ffa4c311b9da93da13325a2439",
       "createdAt": "2026-02-18T17:09:21.933Z"
+    },
+    {
+      "firstName": "Sochima",
+      "lastName": "Ifedikwa",
+      "email": "ifedikwasochima@gmail.com",
+      "accountType": "buyer",
+      "passwordHash": "008eea7fd27fa79708f07a13a5fb6dfb:9224e918907bcd415fd095f16a3ab779063b568f81340cc6cb139aee45662781e85ec015c07aa44b5a671044d066c6d3dafa9f231912a491e85fe2eee5a6add6",
+      "createdAt": "2026-02-19T16:56:21.555Z"
     }
   ]
 }

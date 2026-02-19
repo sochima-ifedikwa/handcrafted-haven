@@ -1,3 +1,59 @@
+## Technologies Used
+### Front-End
+- HTML
+- CSS
+- JavaScript
+- **Next.js**
+
+### Back-End
+- **Node.js**
+- Database (to be determined)
+
+### Project Management & Deployment
+- Git & GitHub
+- GitHub Projects (Kanban Board)
+- **Vercel** (Deployment)
+
+---
+
+## Design Guidelines
+- Consistent branding (colors, typography, layout)
+- Clear and intuitive navigation
+- Responsive and accessible UI
+- SEO and performance best practices
+
+---
+
+## Project Management
+- All tasks and user stories are managed using **GitHub Projects**
+- The team follows collaborative Git workflows and best practices
+- User stories and work items are continuously refined throughout the project
+
+---
+
+## Team Members
+- Mafo Kisanga Glody
+- Joy Oyaleke
+- Sochima Ifedikwa
+
+
+---
+
+## Deployment
+The application will be deployed using **Vercel** and made publicly accessible.
+
+---
+
+## Course Context
+This project is developed as part of a group assignment to:
+- Strengthen full-stack web development skills
+- Build professionalism and teamwork
+- Teach and learn collaboratively following the BYU-Idaho learning model
+
+---
+
+## License
+This project is developed for educational purposes.
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
