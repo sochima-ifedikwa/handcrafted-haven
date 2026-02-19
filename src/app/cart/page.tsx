@@ -129,6 +129,7 @@ export default function CartPage() {
             </div>
           ) : (
             <div
+              className="responsive-cart-layout"
               style={{
                 display: "grid",
                 gridTemplateColumns: "2fr 1fr",
@@ -140,6 +141,7 @@ export default function CartPage() {
                 {cartItems.map((item) => (
                   <div
                     key={item.productId}
+                    className="responsive-cart-item"
                     style={{
                       backgroundColor: "white",
                       border: "1px solid var(--primary)",

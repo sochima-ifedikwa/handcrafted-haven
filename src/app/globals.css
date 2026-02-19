@@ -105,3 +105,43 @@ input {
     color: var(--foreground);
   }
 }
+
+@media (max-width: 900px) {
+  .responsive-top-nav {
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+    gap: 0.75rem !important;
+  }
+
+  .responsive-two-col {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .responsive-cart-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .responsive-cart-item {
+    grid-template-columns: 1fr !important;
+  }
+
+  .responsive-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .responsive-newsletter-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .responsive-newsletter-input {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .responsive-hero-title {
+    font-size: 2.2rem !important;
+    line-height: 1.2 !important;
+  }
+}

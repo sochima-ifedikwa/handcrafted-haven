@@ -253,6 +253,7 @@ export default function ProductPage() {
               </Link>
 
               <div
+                className="responsive-two-col"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
@@ -466,6 +467,7 @@ export default function ProductPage() {
 
                   {/* Add to Cart */}
                   <div
+                    className="responsive-two-col"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr",

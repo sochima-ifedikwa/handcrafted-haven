@@ -328,6 +328,7 @@ export default function RegisterPage() {
             </div>
 
             <div
+              className="responsive-form-grid"
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",

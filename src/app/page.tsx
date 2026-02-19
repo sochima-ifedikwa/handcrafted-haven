@@ -54,6 +54,7 @@ export default function Home() {
             🎨 Handcrafted Haven
           </div>
           <div
+            className="responsive-top-nav"
             style={{
               display: "flex",
               gap: "1rem",
@@ -132,6 +133,7 @@ export default function Home() {
       >
         <div style={{ maxWidth: "900px", margin: "0 auto" }}>
           <h1
+            className="responsive-hero-title"
             style={{
               fontSize: "3.5rem",
               marginBottom: "1rem",
@@ -648,6 +650,7 @@ export default function Home() {
             exclusive offers delivered to your inbox.
           </p>
           <div
+            className="responsive-newsletter-row"
             style={{
               display: "flex",
               gap: "0.5rem",
@@ -657,6 +660,7 @@ export default function Home() {
             }}
           >
             <input
+              className="responsive-newsletter-input"
               type="email"
               placeholder="Enter your email"
               style={{

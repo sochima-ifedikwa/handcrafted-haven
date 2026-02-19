@@ -209,6 +209,7 @@ export default function CheckoutPage() {
               </h2>
 
               <div
+                className="responsive-form-grid"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
@@ -277,6 +278,7 @@ export default function CheckoutPage() {
                 Payment Details
               </h3>
               <div
+                className="responsive-form-grid"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
