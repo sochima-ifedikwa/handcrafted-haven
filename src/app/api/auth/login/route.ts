@@ -39,17 +39,27 @@ export async function POST(request: Request) {
     );
   }
 
-  const result = await validateUserCredentials(email, password);
+  try {
+    const result = await validateUserCredentials(email, password);
 
-  if (!result.ok) {
-    return NextResponse.json({ message: result.error }, { status: 401 });
+    if (!result.ok) {
+      return NextResponse.json({ message: result.error }, { status: 401 });
+    }
+
+    return NextResponse.json(
+      {
+        message: "Login successful! Redirecting...",
+        user: result.user,
+      },
+      { status: 200 },
+    );
+  } catch {
+    return NextResponse.json(
+      {
+        message:
+          "Unable to sign in right now. Check database environment variables and try again.",
+      },
+      { status: 500 },
+    );
   }
-
-  return NextResponse.json(
-    {
-      message: "Login successful! Redirecting...",
-      user: result.user,
-    },
-    { status: 200 },
-  );
 }

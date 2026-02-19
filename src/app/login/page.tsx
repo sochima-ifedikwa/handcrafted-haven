@@ -84,7 +84,8 @@ export default function LoginPage() {
         }),
       });
 
-      const payload = (await response.json()) as {
+      const responseText = await response.text();
+      let payload: {
         message?: string;
         user?: {
           firstName: string;
@@ -92,7 +93,23 @@ export default function LoginPage() {
           email: string;
           accountType: "buyer" | "artisan";
         };
-      };
+      } = {};
+
+      if (responseText) {
+        try {
+          payload = JSON.parse(responseText) as {
+            message?: string;
+            user?: {
+              firstName: string;
+              lastName: string;
+              email: string;
+              accountType: "buyer" | "artisan";
+            };
+          };
+        } catch {
+          payload = {};
+        }
+      }
 
       if (!response.ok) {
         throw new Error(payload.message || "Unable to sign in right now.");

@@ -71,28 +71,38 @@ export async function POST(request: Request) {
     );
   }
 
-  const creationResult = await createUser({
-    firstName,
-    lastName,
-    email,
-    password,
-    accountType,
-    businessName: accountType === "artisan" ? businessName : undefined,
-    bio: body.bio,
-  });
+  try {
+    const creationResult = await createUser({
+      firstName,
+      lastName,
+      email,
+      password,
+      accountType,
+      businessName: accountType === "artisan" ? businessName : undefined,
+      bio: body.bio,
+    });
 
-  if (!creationResult.ok) {
+    if (!creationResult.ok) {
+      return NextResponse.json(
+        { message: creationResult.error },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json(
-      { message: creationResult.error },
-      { status: 409 },
+      {
+        message: "Account created successfully! Redirecting to sign in...",
+        user: creationResult.user,
+      },
+      { status: 201 },
+    );
+  } catch {
+    return NextResponse.json(
+      {
+        message:
+          "Unable to create account right now. Check database environment variables and try again.",
+      },
+      { status: 500 },
     );
   }
-
-  return NextResponse.json(
-    {
-      message: "Account created successfully! Redirecting to sign in...",
-      user: creationResult.user,
-    },
-    { status: 201 },
-  );
 }
