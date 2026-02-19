@@ -1,9 +1,10 @@
-Test accounts are as follows:
-buyer.demo@handcraftedhaven.com
-Password123!
+Test accounts are as follow
 
-artisan.demo@handcraftedhaven.com
-Password123!
+username: buyer.demo@handcraftedhaven.com
+password: Password123!
+
+username: artisan.demo@handcraftedhaven.com
+password: Password123!
 
 ## Technologies Used
 
