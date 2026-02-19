@@ -3,6 +3,7 @@ import Link from "next/link";
 export default function ContactPage() {
   return (
     <section
+      className="responsive-section"
       style={{
         minHeight: "100vh",
         backgroundColor: "var(--background)",
@@ -10,6 +11,7 @@ export default function ContactPage() {
       }}
     >
       <div
+        className="responsive-card"
         style={{
           maxWidth: "800px",
           margin: "0 auto",
@@ -19,7 +21,10 @@ export default function ContactPage() {
           padding: "2rem",
         }}
       >
-        <h1 style={{ color: "var(--primary-dark)", marginBottom: "1rem" }}>
+        <h1
+          className="responsive-page-title"
+          style={{ color: "var(--primary-dark)", marginBottom: "1rem" }}
+        >
           Contact Us
         </h1>
         <p style={{ color: "var(--text-light)", marginBottom: "0.75rem" }}>

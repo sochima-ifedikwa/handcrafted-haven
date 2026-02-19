@@ -28,6 +28,7 @@ export default function WelcomePage() {
 
   return (
     <section
+      className="responsive-section"
       style={{
         minHeight: "100vh",
         display: "flex",
@@ -38,6 +39,7 @@ export default function WelcomePage() {
       }}
     >
       <div
+        className="responsive-card"
         style={{
           width: "100%",
           maxWidth: "560px",
@@ -49,6 +51,7 @@ export default function WelcomePage() {
         }}
       >
         <h1
+          className="responsive-page-title"
           style={{
             fontSize: "2rem",
             color: "var(--primary-dark)",
@@ -61,6 +64,7 @@ export default function WelcomePage() {
           You are now logged in to Handcrafted Haven.
         </p>
         <div
+          className="responsive-inline-cta"
           style={{
             display: "flex",
             gap: "0.75rem",

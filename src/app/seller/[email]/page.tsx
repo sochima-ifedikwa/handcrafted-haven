@@ -63,6 +63,7 @@ export default function SellerProfilePage() {
 
   return (
     <section
+      className="responsive-section"
       style={{
         minHeight: "100vh",
         padding: "2rem",
@@ -93,6 +94,7 @@ export default function SellerProfilePage() {
         ) : profile ? (
           <>
             <div
+              className="responsive-card"
               style={{
                 backgroundColor: "white",
                 border: "1px solid var(--primary)",
@@ -102,6 +104,7 @@ export default function SellerProfilePage() {
               }}
             >
               <h1
+                className="responsive-page-title"
                 style={{ color: "var(--primary-dark)", marginBottom: "0.5rem" }}
               >
                 {profile.sellerBusinessName || profile.sellerName}

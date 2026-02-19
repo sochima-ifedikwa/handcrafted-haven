@@ -152,7 +152,7 @@ export default function SellerDashboard() {
 
   if (!currentUser) {
     return (
-      <section style={{ padding: "3rem", textAlign: "center" }}>
+      <section className="responsive-section" style={{ padding: "3rem", textAlign: "center" }}>
         <p style={{ marginBottom: "1rem" }}>
           Please sign in to access seller tools.
         </p>
@@ -163,7 +163,7 @@ export default function SellerDashboard() {
 
   if (currentUser.accountType !== "artisan") {
     return (
-      <section style={{ padding: "3rem", textAlign: "center" }}>
+      <section className="responsive-section" style={{ padding: "3rem", textAlign: "center" }}>
         <p style={{ marginBottom: "1rem" }}>
           Seller profiles are available for artisan accounts only.
         </p>
@@ -176,6 +176,7 @@ export default function SellerDashboard() {
     <>
       {/* Header */}
       <header
+        className="responsive-header"
         style={{
           backgroundColor: "var(--accent)",
           borderBottom: "1px solid var(--primary)",
@@ -196,6 +197,7 @@ export default function SellerDashboard() {
         >
           <Link
             href="/"
+            className="responsive-brand"
             style={{
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -204,7 +206,10 @@ export default function SellerDashboard() {
           >
             🎨 Handcrafted Haven
           </Link>
-          <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+          <div
+            className="responsive-nav-links"
+            style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}
+          >
             <Link href="/cart">Cart ({totalCartItems})</Link>
             <span style={{ color: "var(--text-light)" }}>📱 Messages</span>
             <span style={{ color: "var(--text-light)" }}>
@@ -230,6 +235,7 @@ export default function SellerDashboard() {
       </header>
 
       <main
+        className="responsive-section"
         style={{
           minHeight: "calc(100vh - 70px)",
           padding: "2rem",
@@ -245,6 +251,7 @@ export default function SellerDashboard() {
           }}
         >
           <section
+            className="responsive-card"
             style={{
               backgroundColor: "white",
               padding: "1.5rem",
@@ -253,6 +260,7 @@ export default function SellerDashboard() {
             }}
           >
             <h1
+              className="responsive-page-title"
               style={{ color: "var(--primary-dark)", marginBottom: "0.5rem" }}
             >
               Seller Profile:{" "}
@@ -294,6 +302,7 @@ export default function SellerDashboard() {
           </section>
 
           <section
+            className="responsive-card"
             style={{
               backgroundColor: "white",
               padding: "1.5rem",
@@ -345,6 +354,7 @@ export default function SellerDashboard() {
                 }}
               />
               <div
+                className="responsive-form-grid"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr 1fr",
@@ -430,6 +440,7 @@ export default function SellerDashboard() {
           </section>
 
           <section
+            className="responsive-card"
             style={{
               backgroundColor: "white",
               padding: "1.5rem",
