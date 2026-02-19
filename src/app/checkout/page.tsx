@@ -9,6 +9,16 @@ export default function CheckoutPage() {
   const currentUser = useCurrentUser();
   const cartItems = useCartItems();
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
+  const [shippingName, setShippingName] = useState("");
+  const [addressLine, setAddressLine] = useState("");
+  const [city, setCity] = useState("");
+  const [stateRegion, setStateRegion] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
 
   const totalItems = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
@@ -28,6 +38,39 @@ export default function CheckoutPage() {
   };
 
   const placeOrder = () => {
+    const cleanCardNumber = cardNumber.replace(/\s+/g, "");
+
+    if (
+      !shippingName.trim() ||
+      !addressLine.trim() ||
+      !city.trim() ||
+      !stateRegion.trim() ||
+      !postalCode.trim() ||
+      !cardName.trim() ||
+      !cleanCardNumber.trim() ||
+      !expiry.trim() ||
+      !cvv.trim()
+    ) {
+      setCheckoutError("Please complete all shipping and payment fields.");
+      return;
+    }
+
+    if (!/^\d{13,19}$/.test(cleanCardNumber)) {
+      setCheckoutError("Enter a valid card number.");
+      return;
+    }
+
+    if (!/^\d{2}\/\d{2}$/.test(expiry.trim())) {
+      setCheckoutError("Expiry must be in MM/YY format.");
+      return;
+    }
+
+    if (!/^\d{3,4}$/.test(cvv.trim())) {
+      setCheckoutError("Enter a valid CVV.");
+      return;
+    }
+
+    setCheckoutError("");
     clearCart();
     setOrderPlaced(true);
   };
@@ -164,6 +207,137 @@ export default function CheckoutPage() {
               >
                 Order Summary
               </h2>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "0.75rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                <input
+                  value={shippingName}
+                  onChange={(event) => setShippingName(event.target.value)}
+                  placeholder="Full Name"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+                <input
+                  value={addressLine}
+                  onChange={(event) => setAddressLine(event.target.value)}
+                  placeholder="Address"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+                <input
+                  value={city}
+                  onChange={(event) => setCity(event.target.value)}
+                  placeholder="City"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+                <input
+                  value={stateRegion}
+                  onChange={(event) => setStateRegion(event.target.value)}
+                  placeholder="State/Region"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+                <input
+                  value={postalCode}
+                  onChange={(event) => setPostalCode(event.target.value)}
+                  placeholder="Postal Code"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+              </div>
+
+              <h3
+                style={{
+                  color: "var(--primary-dark)",
+                  marginBottom: "0.75rem",
+                }}
+              >
+                Payment Details
+              </h3>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "0.75rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                <input
+                  value={cardName}
+                  onChange={(event) => setCardName(event.target.value)}
+                  placeholder="Name on Card"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+                <input
+                  value={cardNumber}
+                  onChange={(event) => setCardNumber(event.target.value)}
+                  placeholder="Card Number"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+                <input
+                  value={expiry}
+                  onChange={(event) => setExpiry(event.target.value)}
+                  placeholder="MM/YY"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+                <input
+                  value={cvv}
+                  onChange={(event) => setCvv(event.target.value)}
+                  placeholder="CVV"
+                  style={{
+                    padding: "0.65rem",
+                    border: "1px solid var(--primary)",
+                    borderRadius: "4px",
+                  }}
+                />
+              </div>
+
+              {checkoutError && (
+                <p
+                  style={{
+                    color: "var(--primary-dark)",
+                    fontWeight: "600",
+                    marginBottom: "0.75rem",
+                  }}
+                >
+                  {checkoutError}
+                </p>
+              )}
+
               <div
                 style={{
                   display: "grid",

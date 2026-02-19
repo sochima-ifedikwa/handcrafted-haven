@@ -693,7 +693,7 @@ export default function Home() {
       <footer
         style={{
           backgroundColor: "var(--foreground)",
-          color: "var(--accent)",
+          color: "var(--background)",
           padding: "3rem 2rem",
         }}
       >
@@ -709,7 +709,7 @@ export default function Home() {
             <div>
               <h4
                 style={{
-                  color: "var(--secondary)",
+                  color: "var(--background)",
                   marginBottom: "1rem",
                   fontSize: "1.1rem",
                 }}
@@ -724,7 +724,7 @@ export default function Home() {
             <div>
               <h4
                 style={{
-                  color: "var(--secondary)",
+                  color: "var(--background)",
                   marginBottom: "1rem",
                   fontSize: "1.1rem",
                 }}
@@ -732,21 +732,36 @@ export default function Home() {
                 Shop
               </h4>
               <ul style={{ listStyle: "none" }}>
-                <li>
-                  <a href="/browse">Browse All</a>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <a
+                    href="/browse"
+                    style={{ display: "inline-block", padding: "0.2rem 0" }}
+                  >
+                    Browse All
+                  </a>
+                </li>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <a
+                    href="/browse?category=jewelry"
+                    style={{ display: "inline-block", padding: "0.2rem 0" }}
+                  >
+                    Jewelry
+                  </a>
                 </li>
                 <li>
-                  <a href="/browse?category=jewelry">Jewelry</a>
-                </li>
-                <li>
-                  <a href="/browse?category=home">Home Decor</a>
+                  <a
+                    href="/browse?category=home"
+                    style={{ display: "inline-block", padding: "0.2rem 0" }}
+                  >
+                    Home Decor
+                  </a>
                 </li>
               </ul>
             </div>
             <div>
               <h4
                 style={{
-                  color: "var(--secondary)",
+                  color: "var(--background)",
                   marginBottom: "1rem",
                   fontSize: "1.1rem",
                 }}
@@ -754,18 +769,28 @@ export default function Home() {
                 For Artisans
               </h4>
               <ul style={{ listStyle: "none" }}>
-                <li>
-                  <a href="/register">Sell With Us</a>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <a
+                    href="/register"
+                    style={{ display: "inline-block", padding: "0.2rem 0" }}
+                  >
+                    Sell With Us
+                  </a>
                 </li>
                 <li>
-                  <a href="/seller-dashboard">Dashboard</a>
+                  <a
+                    href="/seller-dashboard"
+                    style={{ display: "inline-block", padding: "0.2rem 0" }}
+                  >
+                    Dashboard
+                  </a>
                 </li>
               </ul>
             </div>
             <div>
               <h4
                 style={{
-                  color: "var(--secondary)",
+                  color: "var(--background)",
                   marginBottom: "1rem",
                   fontSize: "1.1rem",
                 }}
@@ -773,24 +798,39 @@ export default function Home() {
                 Support
               </h4>
               <ul style={{ listStyle: "none" }}>
-                <li>
-                  <a href="#contact">Contact Us</a>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <a
+                    href="/contact"
+                    style={{ display: "inline-block", padding: "0.2rem 0" }}
+                  >
+                    Contact Us
+                  </a>
+                </li>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <a
+                    href="/privacy-policy"
+                    style={{ display: "inline-block", padding: "0.2rem 0" }}
+                  >
+                    Privacy Policy
+                  </a>
                 </li>
                 <li>
-                  <a href="#about">Privacy Policy</a>
-                </li>
-                <li>
-                  <a href="#top">Terms of Service</a>
+                  <a
+                    href="/terms-of-service"
+                    style={{ display: "inline-block", padding: "0.2rem 0" }}
+                  >
+                    Terms of Service
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
           <div
             style={{
-              borderTop: "1px solid var(--accent)",
+              borderTop: "1px solid var(--background)",
               paddingTop: "2rem",
               textAlign: "center",
-              opacity: 0.8,
+              opacity: 0.95,
             }}
           >
             <p>
