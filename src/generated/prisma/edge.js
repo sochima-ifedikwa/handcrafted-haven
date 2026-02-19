@@ -156,7 +156,8 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.16.2",
@@ -169,13 +170,13 @@ const config = {
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "PRISMA_DATABASE_URL",
+        "fromEnvVar": "DATABASE_URL",
         "value": null
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"PRISMA_DATABASE_URL\")\n  directUrl = env(\"POSTGRES_URL\")\n}\n\nenum AccountType {\n  buyer\n  artisan\n}\n\nmodel User {\n  id           String      @id @default(cuid())\n  firstName    String\n  lastName     String\n  email        String      @unique\n  accountType  AccountType @default(buyer)\n  businessName String?\n  bio          String?\n  passwordHash String\n  createdAt    DateTime    @default(now())\n  updatedAt    DateTime    @updatedAt\n\n  @@index([createdAt])\n}\n",
-  "inlineSchemaHash": "93fdad2be9f7a83d56444480e504fcdfb44f30cbeb2343622a88ebb63a828e6f",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum AccountType {\n  buyer\n  artisan\n}\n\nmodel User {\n  id           String      @id @default(cuid())\n  firstName    String\n  lastName     String\n  email        String      @unique\n  accountType  AccountType @default(buyer)\n  businessName String?\n  bio          String?\n  passwordHash String\n  createdAt    DateTime    @default(now())\n  updatedAt    DateTime    @updatedAt\n\n  @@index([createdAt])\n}\n",
+  "inlineSchemaHash": "96901e397937370ee315708b9b50b16cb227057ad92a556a8fde2229c7427743",
   "copyEngine": true
 }
 config.dirname = '/'
@@ -187,7 +188,7 @@ config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({
   parsed: {
-    PRISMA_DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['PRISMA_DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.PRISMA_DATABASE_URL || undefined
+    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
   }
 })
 
