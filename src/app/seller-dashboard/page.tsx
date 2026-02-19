@@ -152,7 +152,10 @@ export default function SellerDashboard() {
 
   if (!currentUser) {
     return (
-      <section className="responsive-section" style={{ padding: "3rem", textAlign: "center" }}>
+      <section
+        className="responsive-section"
+        style={{ padding: "3rem", textAlign: "center" }}
+      >
         <p style={{ marginBottom: "1rem" }}>
           Please sign in to access seller tools.
         </p>
@@ -163,7 +166,10 @@ export default function SellerDashboard() {
 
   if (currentUser.accountType !== "artisan") {
     return (
-      <section className="responsive-section" style={{ padding: "3rem", textAlign: "center" }}>
+      <section
+        className="responsive-section"
+        style={{ padding: "3rem", textAlign: "center" }}
+      >
         <p style={{ marginBottom: "1rem" }}>
           Seller profiles are available for artisan accounts only.
         </p>

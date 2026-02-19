@@ -70,6 +70,7 @@ export default function Home() {
             <a href="/browse">Browse</a>
             <Link
               href="/cart"
+              className="responsive-cart-pill"
               style={{
                 backgroundColor: "var(--primary)",
                 color: "white",

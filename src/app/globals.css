@@ -198,6 +198,11 @@ input {
     font-size: 0.92rem !important;
   }
 
+  .responsive-cart-pill {
+    white-space: normal !important;
+    line-height: 1.2 !important;
+  }
+
   .responsive-section {
     padding: 1.25rem 0.75rem !important;
   }
