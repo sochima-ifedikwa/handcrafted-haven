@@ -7,10 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio",
-    "postinstall": "prisma generate"
+    "auth:secret": "node scripts/generate-auth-secret.cjs",
+    "prisma:generate": "dotenv -e .env.development.local -- prisma generate",
+    "prisma:migrate": "dotenv -e .env.development.local -- prisma migrate dev",
+    "prisma:migrate:deploy": "dotenv -e .env.development.local -- prisma migrate deploy",
+    "prisma:migrate:status": "dotenv -e .env.development.local -- prisma migrate status",
+    "prisma:studio": "dotenv -e .env.development.local -- prisma studio",
+    "db:seed": "dotenv -e .env.development.local -- node prisma/seed.mjs",
+    "postinstall": "dotenv -e .env.development.local -- prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",
@@ -25,6 +29,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "typescript": "^5"

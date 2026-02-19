@@ -1,3 +1,10 @@
+Test accounts are as follows:
+buyer.demo@handcraftedhaven.com
+Password123!
+
+artisan.demo@handcraftedhaven.com
+Password123!
+
 ## Technologies Used
 
 ### Front-End
