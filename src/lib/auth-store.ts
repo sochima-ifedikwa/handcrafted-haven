@@ -1,22 +1,18 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { AccountType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
-type AccountType = "buyer" | "artisan";
+type LocalAccountType = "buyer" | "artisan";
 
 export type StoredUser = {
   firstName: string;
   lastName: string;
   email: string;
-  accountType: AccountType;
+  accountType: LocalAccountType;
   businessName?: string;
   bio?: string;
   passwordHash: string;
   createdAt: string;
-};
-
-type UsersData = {
-  users: StoredUser[];
 };
 
 type CreateUserInput = {
@@ -24,13 +20,10 @@ type CreateUserInput = {
   lastName: string;
   email: string;
   password: string;
-  accountType: AccountType;
+  accountType: LocalAccountType;
   businessName?: string;
   bio?: string;
 };
-
-const dataDirectory = path.join(process.cwd(), "data");
-const usersFilePath = path.join(dataDirectory, "users.json");
 
 const hashPassword = (password: string) => {
   const salt = randomBytes(16).toString("hex");
@@ -54,46 +47,28 @@ const verifyPassword = (password: string, storedHash: string) => {
   return timingSafeEqual(hashedBuffer, storedBuffer);
 };
 
-const ensureStoreExists = async () => {
-  await mkdir(dataDirectory, { recursive: true });
-
-  try {
-    await readFile(usersFilePath, "utf-8");
-  } catch {
-    const emptyData: UsersData = { users: [] };
-    await writeFile(usersFilePath, JSON.stringify(emptyData, null, 2), "utf-8");
+const mapAccountTypeToDb = (accountType: LocalAccountType): AccountType => {
+  if (accountType === "artisan") {
+    return AccountType.artisan;
   }
+
+  return AccountType.buyer;
 };
 
-const loadUsersData = async (): Promise<UsersData> => {
-  await ensureStoreExists();
-
-  try {
-    const fileContent = await readFile(usersFilePath, "utf-8");
-    const parsed = JSON.parse(fileContent) as UsersData;
-
-    if (!Array.isArray(parsed.users)) {
-      return { users: [] };
-    }
-
-    return parsed;
-  } catch {
-    return { users: [] };
+const mapAccountTypeFromDb = (accountType: AccountType): LocalAccountType => {
+  if (accountType === AccountType.artisan) {
+    return "artisan";
   }
-};
 
-const saveUsersData = async (data: UsersData) => {
-  await ensureStoreExists();
-  await writeFile(usersFilePath, JSON.stringify(data, null, 2), "utf-8");
+  return "buyer";
 };
 
 export const createUser = async (input: CreateUserInput) => {
   const normalizedEmail = input.email.trim().toLowerCase();
-  const usersData = await loadUsersData();
-
-  const existingUser = usersData.users.find(
-    (user) => user.email.toLowerCase() === normalizedEmail,
-  );
+  const existingUser = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { id: true },
+  });
 
   if (existingUser) {
     return {
@@ -102,19 +77,17 @@ export const createUser = async (input: CreateUserInput) => {
     };
   }
 
-  const newUser: StoredUser = {
-    firstName: input.firstName.trim(),
-    lastName: input.lastName.trim(),
-    email: normalizedEmail,
-    accountType: input.accountType,
-    businessName: input.businessName?.trim() || undefined,
-    bio: input.bio?.trim() || undefined,
-    passwordHash: hashPassword(input.password),
-    createdAt: new Date().toISOString(),
-  };
-
-  usersData.users.push(newUser);
-  await saveUsersData(usersData);
+  const newUser = await prisma.user.create({
+    data: {
+      firstName: input.firstName.trim(),
+      lastName: input.lastName.trim(),
+      email: normalizedEmail,
+      accountType: mapAccountTypeToDb(input.accountType),
+      businessName: input.businessName?.trim() || null,
+      bio: input.bio?.trim() || null,
+      passwordHash: hashPassword(input.password),
+    },
+  });
 
   return {
     ok: true as const,
@@ -122,10 +95,10 @@ export const createUser = async (input: CreateUserInput) => {
       firstName: newUser.firstName,
       lastName: newUser.lastName,
       email: newUser.email,
-      accountType: newUser.accountType,
-      businessName: newUser.businessName,
-      bio: newUser.bio,
-      createdAt: newUser.createdAt,
+      accountType: mapAccountTypeFromDb(newUser.accountType),
+      businessName: newUser.businessName ?? undefined,
+      bio: newUser.bio ?? undefined,
+      createdAt: newUser.createdAt.toISOString(),
     },
   };
 };
@@ -135,11 +108,7 @@ export const validateUserCredentials = async (
   password: string,
 ) => {
   const normalizedEmail = email.trim().toLowerCase();
-  const usersData = await loadUsersData();
-
-  const user = usersData.users.find(
-    (existingUser) => existingUser.email.toLowerCase() === normalizedEmail,
-  );
+  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
 
   if (!user) {
     return { ok: false as const, error: "Invalid email or password." };
@@ -156,21 +125,17 @@ export const validateUserCredentials = async (
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      accountType: user.accountType,
-      businessName: user.businessName,
-      bio: user.bio,
-      createdAt: user.createdAt,
+      accountType: mapAccountTypeFromDb(user.accountType),
+      businessName: user.businessName ?? undefined,
+      bio: user.bio ?? undefined,
+      createdAt: user.createdAt.toISOString(),
     },
   };
 };
 
 export const getUserByEmail = async (email: string) => {
   const normalizedEmail = email.trim().toLowerCase();
-  const usersData = await loadUsersData();
-
-  const user = usersData.users.find(
-    (existingUser) => existingUser.email.toLowerCase() === normalizedEmail,
-  );
+  const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
 
   if (!user) {
     return null;
@@ -180,9 +145,9 @@ export const getUserByEmail = async (email: string) => {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
-    accountType: user.accountType,
-    businessName: user.businessName,
-    bio: user.bio,
-    createdAt: user.createdAt,
+    accountType: mapAccountTypeFromDb(user.accountType),
+    businessName: user.businessName ?? undefined,
+    bio: user.bio ?? undefined,
+    createdAt: user.createdAt.toISOString(),
   };
 };

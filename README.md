@@ -42,6 +42,48 @@
 ## Deployment
 The application will be deployed using **Vercel** and made publicly accessible.
 
+## Database Setup (Prisma + PostgreSQL on Vercel)
+
+This project now uses **Prisma** for user authentication storage.
+
+1. Install dependencies:
+
+```bash
+pnpm install
+```
+
+2. Set your connection string in `.env`:
+
+```bash
+DATABASE_URL="postgresql://..."
+```
+
+3. Create/update your database schema:
+
+```bash
+pnpm prisma:migrate --name init_users
+```
+
+4. Generate Prisma client (if needed manually):
+
+```bash
+pnpm prisma:generate
+```
+
+### Vercel Postgres Steps
+
+1. In Vercel, open your project and go to **Storage**.
+2. Create/connect a **Postgres** database.
+3. Copy `DATABASE_URL` from Vercel env variables.
+4. Add that variable to Vercel environments (`Development`, `Preview`, `Production`).
+5. Deploy your app.
+
+### Auth Storage Notes
+
+- Prisma schema: `prisma/schema.prisma`
+- Prisma client singleton: `src/lib/prisma.ts`
+- User auth data layer: `src/lib/auth-store.ts`
+
 ---
 
 ## Course Context
